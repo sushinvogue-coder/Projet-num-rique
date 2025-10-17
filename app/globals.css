@@ -1,6 +1,8 @@
+@reference "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "./ThemeDebug.css";
 
 /* === Racine : pas de scroll global, fond sombre partout === */
 html,
@@ -405,11 +407,11 @@ section.profile .field > label { margin-bottom: 6px; }
 .cardsGrid .card .grid.two { row-gap: 10px; }    /* évite que le “gap” grossisse la ligne */
 
 /* === Boutique : forcer le fond gris global (même logique que Profil) === */
-section.boutique,
 section.boutique .container,
 section.boutique .panels {
-  background: var(--bg-main) !important;
+  background-color: transparent; /* on ne touche pas au background-image de la page */
 }
+
 
 /* —— Carrousel add-ons —— */
 @keyframes addons-marquee {

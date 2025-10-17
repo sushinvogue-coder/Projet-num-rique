@@ -887,7 +887,6 @@ onClick={() => goCheckout("price_1SIZuNKhKf5eqe6euyYmvZtI", "ULTIMATE")}
 
   /* Couleur de secours si l’image ne charge pas */
   background-color: #1C1C1C;
-
   color: var(--text, #000000);
   min-height: 100vh;
   display: flex;
@@ -981,6 +980,7 @@ onClick={() => goCheckout("price_1SIZuNKhKf5eqe6euyYmvZtI", "ULTIMATE")}
         .planCard {
 	  position: relative;
           background: #ffffff;
+  color: #111;  
           border: 1px solid var(--border);
           border-radius: 14px;
           padding: 16px;
@@ -1160,6 +1160,7 @@ min-width: 0;
 
 .wideItem {
   background: #fff;
+  color: #111;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
