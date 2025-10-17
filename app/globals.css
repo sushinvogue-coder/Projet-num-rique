@@ -1,0 +1,474 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Racine : pas de scroll global, fond sombre partout === */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;   /* empêche le scroll horizontal parasite */
+  overflow-y: auto;     /* autorise le scroll vertical unique */
+  background: var(--bg-main);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+/* ======= Palette sombre unique ======= */
+/* Sidebar = noir pur (#000)
+   Fond global = #0e0e0e (un ton plus clair) */
+:root {
+  --bg-main: #0e0e0e;       /* fond global */
+  --text: #e6e8ec;          /* texte principal */
+  --muted: #a3a7b0;         /* texte secondaire */
+  --card-bg: #141414;       /* fond des cartes */
+  --border: #0891B2;
+  --button-bg: #111111;
+  --button-text: #ffffff;
+  --link: #e6e8ec;
+  --ph: #9aa4b2;            /* placeholders */
+}
+
+main {
+  @apply p-4;
+}
+
+/* ======= Liens ======= */
+a,
+a:link,
+a:visited,
+a:hover,
+a:focus,
+a:active {
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+  text-decoration-color: transparent !important;
+  transition: color .2s ease;
+  color: var(--link);
+}
+
+/* ======= Utilitaires ======= */
+.card {
+  @apply rounded-xl border p-4 shadow;
+  background: var(--card-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.grid {
+  @apply grid gap-4;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #111;         /* champs lisibles sur sombre */
+  color: #f5f6f9;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-lg px-3 py-2 font-medium;
+  background: var(--button-bg);
+  color: var(--button-text);
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid #3f3f46;
+}
+
+.btn.danger {
+  background-color: #dc2626;
+}
+
+.btn.success {
+  background-color: #16a34a;
+}
+
+/* ======= Placeholders ======= */
+input::placeholder,
+textarea::placeholder {
+  color: var(--ph) !important;
+  opacity: 1 !important;
+}
+
+/* ======= Autofill ======= */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #0f172a !important;
+  transition: background-color 9999s ease-out 0s;
+  caret-color: #0f172a;
+}
+
+/* ======= Champs clairs sur sombre ======= */
+.lightOnDark {
+  background: #fff !important;
+  color: #0f172a !important;
+}
+.lightOnDark::placeholder {
+  color: #475569 !important;
+  opacity: 1 !important;
+}
+.lightOnDark option {
+  color: #0f172a;
+  background: #fff;
+}
+
+/* ==== Fond sombre garanti, même si un conteneur est transparent ==== */
+html, body { background: var(--bg-main) !important; }
+.shell, .main { background: var(--bg-main) !important; }
+section.profile, section.profile .container, section.profile .cardsGrid {
+  background: var(--bg-main) !important;
+}
+
+/* === FOND SOMBRE DÉFINITIF, quoi qu'il arrive === */
+:root, html, body, #__next,
+.shell, .main,
+section.profile,
+section.profile .container,
+section.profile .cardsGrid {
+  background: var(--bg-main) !important;
+}
+
+/* ===== Harmonisation largeur/hauteur et alignements fins ===== */
+/* Hauteur standard pour toutes les lignes (champs + boutons) */
+:root { --row-h: 44px; }
+
+/* 1) Étendre Nom complet / Email (mode lecture) et Username (mode édition) */
+.profile .field .staticRow,
+.profile .field .editRow,
+.profile .field .controlPanel.inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Le contenu “texte” s’étire, l’icône/crayon reste compact */
+.profile .field .staticRow .staticBox,
+.profile .field .editRow .controlPanel .input,
+.profile .field .controlPanel.inline .input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Boutons/icone restent à leur taille naturelle */
+.profile .iconButton,
+.profile .field .controlPanel.inline .btn {
+  flex: 0 0 auto;
+}
+
+/* 2) Hauteurs uniformes (champs, “Vérifier”, etc.) */
+.profile .staticBox,
+.profile .controlPanel.inline,
+.profile .btn.small {
+  height: var(--row-h);
+}
+.profile .input {
+  height: calc(var(--row-h) - 2px); /* compensation de la bordure */
+  line-height: calc(var(--row-h) - 2px);
+}
+
+/* 3) Abonnement : aligner verticalement avec “Nom d’utilisateur” */
+.profile .subcard.sub-account .subFlex {
+  display: flex;
+  align-items: center;
+  min-height: var(--row-h);
+  gap: 10px;
+}
+
+/* 4) Double authentification (2FA) : même hauteur que les champs à côté */
+.profile .twofaRow,
+.profile .twofaRow .controlPanel.inline {
+  display: flex;
+  align-items: center;
+  min-height: var(--row-h);
+}
+
+/* 5) Petites finitions d’alignement horizontal (éviter les “doubles cartes”) */
+.profile .controlPanel {
+  padding: 6px 8px;
+}
+
+.input-stretch {
+  flex: 1;            /* prend toute la largeur dispo */
+  min-width: 0;       /* évite le débordement */
+}
+
+.profile .field label { margin-bottom: 6px; } /* garde l’air sans ajouter de hauteur inutile */
+
+/* Sécurité : pas de marge parasite */
+html, body { margin: 0 !important; padding: 0 !important; }
+
+/* ---------- Compactage vertical ciblé ---------- */
+
+/* 1) Nom d’utilisateur : on réduit la hauteur en baissant les paddings */
+.controlPanel.compact {
+  padding-block: 4px;          /* au lieu de 6~8px selon ta base */
+}
+.controlPanel.compact .input {
+  height: 32px;                /* petite hauteur, comme les champs “affichage” */
+  padding: 6px 10px;
+}
+.controlPanel.compact .btn.small {
+  padding: 6px 10px;           /* bouton plus fin pour matcher la ligne */
+}
+
+/* 2) Abonnement : une ligne “plate” et courte, centrée verticalement */
+.sub-account.compact {
+  padding: 0;
+  background: transparent;
+  border: none;
+  min-height: 32px;            /* même cible que l’input ci-dessus */
+  display: flex;
+  align-items: center;         /* aligne sur la ligne du champ à gauche */
+  gap: 10px;
+}
+.sub-account.compact .btn.small {
+  padding: 6px 10px;
+}
+
+/* === Uniformisation des hauteurs (applique à TOUT) === */
+.profile {
+  --field-h: 36px; /* ajuste 34–40px si tu veux */
+}
+
+/* Champs lecture seule, champs éditables, boutons, icônes, panels */
+.profile .staticBox,
+.profile .input,
+.profile .btn.small,
+.profile .iconButton,
+.profile .controlPanel,
+.profile .controlPanel.inline {
+  height: var(--field-h);
+  min-height: var(--field-h);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Evite que le padding vertical recrée des hauteurs différentes */
+.profile .staticBox { padding: 0 10px; }
+.profile .controlPanel,
+.profile .controlPanel.inline { padding: 0 8px; }
+.profile .btn.small { padding: 0 12px; }
+.profile .iconButton { width: var(--field-h); padding: 0; }
+
+/* Inputs: pas de padding vertical qui gonfle la ligne */
+.profile .input {
+  padding: 0 12px;
+  line-height: 1.2; /* pour le texte, pas la hauteur */
+}
+
+/* Cas spécifiques: les lignes 'Nom complet' / 'Email' */
+.profile .nameRowStatic .staticBox,
+.profile .emailRowStatic .staticBox,
+.profile .nameRowEdit .input,
+.profile .emailRowEdit .input {
+  height: var(--field-h);
+  min-height: var(--field-h);
+}
+
+/* Uniformiser la hauteur des champs readonly avec les champs input */
+input[readonly],
+input[disabled],
+.field.readonly {
+  height: 38px !important;   /* même hauteur que les champs de saisie */
+  line-height: 38px !important;
+  padding: 0 12px !important;
+  font-size: 14px;
+}
+
+/* ---------- UNIFORMISATION FINALE DES HAUTEURS (COLLER EN FIN DE globals.css) ---------- */
+/* Valeur de référence : change-la si tu veux plus petit/plus grand */
+:root { --row-h-final: 42px; } /* première chose à modifier si tu veux ajuster la hauteur globale */
+
+.profile,
+.profile .container,
+.profile .cardsGrid { box-sizing: border-box; }
+
+/* Tout ce qui est "ligne" doit partager la même hauteur et inclure padding dans la hauteur */
+.profile .staticBox,
+.profile .controlPanel,
+.profile .controlPanel.inline,
+.profile .controlPanel.nochrome,
+.profile .input,
+.profile .select,
+.profile .btn.small,
+.profile .iconButton {
+  box-sizing: border-box;            /* padding + border inclus dans height */
+  height: var(--row-h-final) !important;
+  min-height: var(--row-h-final) !important;
+  line-height: calc(var(--row-h-final) - 2px) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;                    /* padding horizontal standard — vertical réduit pour tenir la hauteur */
+}
+
+/* Inputs : garder le padding intérieur mais forcer la taille correcte */
+.profile .input {
+  height: calc(var(--row-h-final) - 2px) !important; /* compense la bordure de 1px top+bottom */
+  padding: 0 10px !important;
+  border-radius: 10px;
+  background: #111 !important;
+  color: var(--text, #e6e8ec) !important;
+}
+
+/* Static boxes (affichage non-éditable) : idem look que les inputs */
+.profile .staticBox {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px !important;
+  background: #1b1b1b !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  height: var(--row-h-final) !important;
+}
+
+/* Boutons/icônes alignés et même hauteur */
+.profile .btn.small,
+.profile .iconButton {
+  height: var(--row-h-final) !important;
+  padding: 0 12px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Si tu veux qu'un controlPanel prenne toute la largeur (username stretch), applique la classe .stretch */
+.controlPanel.stretch,
+.controlPanel.inline.stretch {
+  width: 100% !important;
+}
+.controlPanel.stretch .input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(var(--row-h-final) - 2px) !important;
+}
+
+/* Cas des éléments "jauge" (barres de sécurité du mdp) : inline à droite */
+.controlPanel.pwd {
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  height: var(--row-h-final) !important;
+}
+
+/* Remonter légèrement la carte "Sessions & appareils" */
+.card.bump-up { margin-top: -12px; }  /* ajuste à -8px / -16px selon ton œil */
+
+.strengthInline .bar {
+  width: 18px;
+  height: 8px;
+}
+
+/* Profil — encadrés internes (ID utilisateur, Email, Nom, MDP, Abonnement, etc.)
+   => effet identique à l'image du BAS */
+section.profile .field > .controlPanel,
+section.profile .field > .controlPanel.inline,
+section.profile .field > .controlPanel.nochrome, /* force aussi ceux marqués nochrome */
+section.profile .subcard,
+section.profile .subcard.sub-inline {
+  background: #01161B !important;                 /* fond bleu-vert */
+  border: 1px solid var(--border, #0891B2) !important; /* bordure cyan existante */
+  box-shadow: none !important;
+}
+
+/* Blocs de champs (niveau 2) */
+section.profile .field {
+  background: #01161B;
+  border: 1px solid var(--border, #0891B2);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* (petit confort) espace le label du contenu */
+section.profile .field > label { margin-bottom: 6px; }
+
+/* S'assurer que aucune règle précédente haute-spécificité ne gâche tout : */
+.profile * { box-sizing: border-box; }
+
+/* 3) Petite harmonisation générale de la ligne username + abonnement */
+.cardsGrid .card .grid.two { row-gap: 10px; }    /* évite que le “gap” grossisse la ligne */
+
+/* === Boutique : forcer le fond gris global (même logique que Profil) === */
+section.boutique,
+section.boutique .container,
+section.boutique .panels {
+  background: var(--bg-main) !important;
+}
+
+/* —— Carrousel add-ons —— */
+@keyframes addons-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* -50% car on duplique la liste */
+}
+.addons-carousel {
+  display: flex;
+  gap: .75rem;
+  will-change: transform;
+  animation: addons-marquee 28s linear infinite;
+}
+.group:hover .addons-carousel {
+  animation-play-state: paused; /* Pause au survol */
+}
+
+/* Empêche tout débordement vertical de l’encadré Disponibles */
+.addons-viewport {
+  overflow: hidden;
+  height: 6.5rem;           /* ajuste si besoin: 6–8rem */
+}
+@media (min-width: 768px) {
+  .addons-viewport { height: 7.5rem; }
+}
+
+/* Cartes compactes pour « Inclus » / « Souscrits » (2 colonnes) */
+.addon-card {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: .75rem;
+  padding: .75rem;
+  border-radius: .75rem;
+  border: 1px solid hsl(0 0% 18%);
+  background: rgba(20,20,20,.5); /* reste sombre */
+}
+.addon-icon {
+  width: 56px; height: 56px;
+  border-radius: .6rem;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,.04);
+  border: 1px solid hsl(0 0% 22%);
+}
+.panel {
+  position: relative; /* nécessaire pour positionner le badge */
+  padding: 16px;
+}
+
+.audience-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #e91e63; /* rose comme bouton */
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.addon-title { font-weight: 600; font-size: .95rem; line-height: 1.15rem; }
+.addon-desc  { font-size: .78rem; line-height: 1rem; opacity: .7; }
