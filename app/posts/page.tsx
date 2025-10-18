@@ -3369,7 +3369,7 @@ if (((im as any).sizeMB || 0) > L.imageMaxSizeMB!) {
   // Vidéos : durée / poids
   if (videos.length) {
     if (L.videoMaxDurationSec) {
-      const badDur = videos.find(v => (v.durationSec || 0) > L.videoMaxDurationSec!);
+      const badDur = videos.find(v => ((((v as any).durationSec ?? (v as any).duration ?? 0)) > L.videoMaxDurationSec!));
       if (badDur) block.push(`Vidéo trop longue (> ${Math.round(L.videoMaxDurationSec/60)} min)`);
     }
     if (L.videoMaxSizeMB) {
@@ -3425,7 +3425,7 @@ if (k === "youtube" && flags.hasImage)  messages.push(`${NETWORKS[k].label} : Im
   // --- VIDÉOS ---
   if (videos.length) {
     if (L.videoMaxDurationSec) {
-      const badDur = videos.find(v => (v.durationSec || 0) > L.videoMaxDurationSec!);
+      const badDur = videos.find(v => ((((v as any).durationSec ?? (v as any).duration ?? 0)) > L.videoMaxDurationSec!));
       if (badDur) {
         const maxMin = Math.round(L.videoMaxDurationSec! / 60);
         messages.push(`${NETWORKS[k].label} : vidéo trop longue (${Math.round(badDur.durationSec!/60)} min / limite ${maxMin} min)`);
