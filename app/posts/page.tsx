@@ -28,7 +28,7 @@ import { supabase } from "@/lib/supabaseClient";
 // --- AJOUT : écriture minimale dans la table `posts`
 async function persistPost(
   kind: "draft" | "schedule" | "publish",
-  draft: { text?: string; scheduledAt?: string | null }
+  draft: Draft
 ) {
   const ws =
     typeof window !== "undefined"
@@ -87,7 +87,7 @@ type Draft = {
   text: string;
   media: File[];
   allowComments: boolean;
-  scheduledAt?: string;
+  scheduledAt?: string | null;
   enabled: Record<NetworkKey, boolean>;
 };
 
@@ -125,7 +125,7 @@ export default function CreatePostPageDesktop() {
     text: "",
     media: [],
     allowComments: true,
-    scheduledAt: "",
+    scheduledAt: null,
     enabled: { x: false, instagram: false, facebook: false, linkedin: false, youtube: false, tiktok: false },
   });
 
