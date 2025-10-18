@@ -61,14 +61,17 @@ export async function POST(req: Request) {
     fs.unlink(outPath).catch(() => {});
     fs.rmdir(tmpDir).catch(() => {});
 
-    const safeName = (file.name || "video").replace(/\.[^.]+$/, "") + ".mp4";
-    return new NextResponse(out, {
-      headers: {
-        "Content-Type": "video/mp4",
-        "Content-Disposition": `attachment; filename="${safeName}"`,
-        "Cache-Control": "no-store",
-      },
-    });
+const safeName = (file.name || "video").replace(/\.[^.]+$/, "") + ".mp4";
+
+// Buffer -> Blob pour satisfaire BodyInit (TypeScript)
+const body = new Blob([out], { type: "video/mp4" });
+
+return new NextResponse(body, {
+  headers: {
+    "Content-Type": "video/mp4",
+    "Content-Disposition": `attachment; filename="${safeName}"`,
+  },
+});
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message || e) }, { status: 500 });
   }
