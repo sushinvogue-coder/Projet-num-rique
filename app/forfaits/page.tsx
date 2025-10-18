@@ -436,14 +436,6 @@ onClick={() => goCheckout("price_1SIZuNKhKf5eqe6euyYmvZtI", "ULTIMATE")}
   </ul>
 ) : null}
 
-
-{(() => {
-  const key = `inc-${a.name.toLowerCase().replace(/\s+/g, "-")}`;
-  const extraFeatures = (a.features || []).slice(3);
-  const extraDetails  = a.details || [];
-
-})()}
-
 </div>
 
                   ))}
