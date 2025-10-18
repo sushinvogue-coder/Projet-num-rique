@@ -163,10 +163,10 @@ type MediaMeta = {
   kind: MediaKind;
   width?: number;
   height?: number;
-  duration?: number; // s
-  bytes?: number;    // octets
-  sizeMB?: number;   // *** AJOUT ***
-  filename?: string;
+  durationSec?: number; // secondes (vidéo)
+  sizeMB?: number;      // poids en Mo
+  name?: string;        // nom de fichier (cohérent avec les usages)
+  bytes?: number;
   mime?: string;
 };
 
@@ -3322,16 +3322,6 @@ if (k === "youtube" && flags.hasImage && !flags.hasVideo) {
   return { level: "ok", message: "OK" };
 }
 type MediaKind = "image" | "video" | "doc" | "other";
-
-type MediaMeta = {
-  kind: MediaKind;
-  width?: number;
-  height?: number;
-  duration?: number; // en secondes (vidéo)
-  bytes?: number;    // taille du fichier
-  filename?: string;
-  mime?: string;
-};
 
 function extraNetworkChecks(
   k: NetworkKey,
