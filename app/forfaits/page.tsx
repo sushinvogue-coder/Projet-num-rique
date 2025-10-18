@@ -252,19 +252,24 @@ useEffect(() => {
 }, []);
 
 // AJOUT Stripe — helper front
-async function goCheckout(priceId: string, planKey: PlanKey) {
+async function goCheckout(priceId: string, planKey?: PlanKey) {
+  const chosen = (planKey ?? "monthly") as PlanKey; // défaut sûr
+
   try {
-    localStorage.setItem("intendedPlan", planKey); // on retient le forfait visé
+    localStorage.setItem("intendedPlan", chosen); // on retient le forfait visé
   } catch {}
+
   const r = await fetch("/api/stripe/create-checkout-session", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ priceId }),
+    body: JSON.stringify({ priceId }), // on n'envoie pas la période côté API
   });
+
   if (!r.ok) {
     alert(await r.text());
     return;
   }
+
   const { url } = await r.json();
   window.location.href = url;
 }
