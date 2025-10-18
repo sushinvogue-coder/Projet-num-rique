@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import {
   Facebook, Instagram, Linkedin, Youtube, Tv2,
   Hash, Wand2, Mic, Home, Search, Plus, User, Languages, Image as ImageIcon, Video, Type, Link as LinkIcon, FileText, Replace, RefreshCcw,
@@ -58,7 +59,7 @@ if (kind === "schedule") {
 
 type NetworkKey = "x" | "instagram" | "facebook" | "linkedin" | "youtube" | "tiktok";
 
-const NETWORKS: Record<NetworkKey, { label: string; icon: JSX.Element; max: number; }> = {
+const NETWORKS: Record<NetworkKey, { label: string; icon: ReactNode; max: number; }> = {
   x:         { label: "X (Twitter)", icon: <FaTwitter size={16} color="currentColor" />,  max: 280 },
   instagram: { label: "Instagram",   icon: <Instagram size={16} />, max: 2200 },
   facebook:  { label: "Facebook",    icon: <Facebook size={16} />,  max: 63206 },
@@ -3002,7 +3003,7 @@ const { draft, previews, primaryIdx, ytMuted, toggleYtMuted, virtualFormats } = 
   const items = draft.media;
   const primary = (primaryIdx >= 0 && primaryIdx < items.length) ? primaryIdx : 0;
 
-  let media: JSX.Element | null = null;
+let media: ReactNode | null = null;
   if (items.length) {
     const first = previews[primary] ?? previews[0];
     const file  = items[primary] ?? items[0];
