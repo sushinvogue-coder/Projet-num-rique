@@ -1,35 +1,39 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-08-27.basil",
-});
+export const runtime = "nodejs"; // Stripe ne fonctionne pas en Edge
+
+function getBaseUrl() {
+  // 1) URL publique si dispo, 2) Vercel, 3) local
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  );
+}
+
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error("STRIPE_SECRET_KEY is missing");
+  return new Stripe(key, { apiVersion: "2024-06-20" });
+}
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => ({}));
-    const priceId: string | undefined = body?.priceId;
-
-    // ✅ Option 1: tu passes un priceId depuis le front (recommandé)
-    // ✅ Option 2: sinon on utilise ce prix par défaut (remplace par ton vrai ID Stripe "price_...")
-    const fallbackPriceId = "price_xxx_remplace_moi";
-    const price = priceId || fallbackPriceId;
-
-    if (!price || price.startsWith("price_xxx")) {
-      return new NextResponse(
-        "Aucun priceId fourni et fallback non remplacé. Renseigne un ID Stripe du type price_...",
-        { status: 400 }
-      );
+    const { priceId } = await req.json().catch(() => ({}));
+    const price = priceId || process.env.STRIPE_FALLBACK_PRICE_ID;
+    if (!price) {
+      return new NextResponse("Missing priceId (body.priceId or STRIPE_FALLBACK_PRICE_ID)", { status: 400 });
     }
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const stripe = getStripe();
+    const baseUrl = getBaseUrl();
 
     const session = await stripe.checkout.sessions.create({
-      mode: "subscription", // Mets "payment" si c’est un paiement unique
+      mode: "subscription", // mets "payment" si achat unique
       line_items: [{ price, quantity: 1 }],
-success_url: `${baseUrl}/forfaits?checkout=success`,
-cancel_url:  `${baseUrl}/forfaits?checkout=cancel`,
+      success_url: `${baseUrl}/forfaits?checkout=success`,
+      cancel_url: `${baseUrl}/forfaits?checkout=cancel`,
+      // allow_promotion_codes: true, // optionnel
     });
 
     return NextResponse.json({ url: session.url });
@@ -38,3 +42,4 @@ cancel_url:  `${baseUrl}/forfaits?checkout=cancel`,
     return new NextResponse("Erreur Stripe: " + err.message, { status: 500 });
   }
 }
+
