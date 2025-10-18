@@ -3353,7 +3353,7 @@ function extraNetworkChecks(
   // Poids images
   if (L.imageMaxSizeMB) {
     images.forEach((im) => {
-      if ((im.sizeMB || 0) > L.imageMaxSizeMB!) {
+if (((im as any).sizeMB || 0) > L.imageMaxSizeMB!) {
         block.push(`Image trop lourde (> ${L.imageMaxSizeMB} Mo)`);
       }
     });
