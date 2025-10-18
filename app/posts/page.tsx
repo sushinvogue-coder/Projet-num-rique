@@ -3373,7 +3373,7 @@ if (((im as any).sizeMB || 0) > L.imageMaxSizeMB!) {
       if (badDur) block.push(`Vidéo trop longue (> ${Math.round(L.videoMaxDurationSec/60)} min)`);
     }
     if (L.videoMaxSizeMB) {
-      const badSz = videos.find(v => (v.sizeMB || 0) > L.videoMaxSizeMB!);
+      const badSz = (videos as Array<MediaMeta & { sizeMB?: number; sizeBytes?: number }>).find(v => ((v.sizeMB ?? (v.sizeBytes ? v.sizeBytes / 1_000_000 : 0)) > (L.videoMaxSizeMB || 0)));
       if (badSz) block.push(`Vidéo trop lourde (> ${L.videoMaxSizeMB} Mo)`);
     }
   }
@@ -3432,7 +3432,7 @@ if (k === "youtube" && flags.hasImage)  messages.push(`${NETWORKS[k].label} : Im
       }
     }
     if (L.videoMaxSizeMB) {
-      const badSz = videos.find(v => (v.sizeMB || 0) > L.videoMaxSizeMB!);
+      const badSz = (videos as Array<MediaMeta & { sizeMB?: number; sizeBytes?: number }>).find(v => ((v.sizeMB ?? (v.sizeBytes ? v.sizeBytes / 1_000_000 : 0)) > (L.videoMaxSizeMB || 0)));
       if (badSz) messages.push(`${NETWORKS[k].label} : vidéo "${badSz.name}" trop lourde (> ${L.videoMaxSizeMB} Mo)`);
     }
   }
