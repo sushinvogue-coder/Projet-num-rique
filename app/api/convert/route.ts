@@ -64,7 +64,7 @@ export async function POST(req: Request) {
 const safeName = (file.name || "video").replace(/\.[^.]+$/, "") + ".mp4";
 
 // Buffer (Node) -> ArrayBuffer (BodyInit compatible)
-const body: ArrayBuffer = out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength);
+const body = out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength) as ArrayBuffer;
 
 return new NextResponse(body, {
   headers: {
