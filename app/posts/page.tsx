@@ -158,13 +158,16 @@ useEffect(() => {
   setPreviews(urls);
   return () => urls.forEach((u) => URL.revokeObjectURL(u));
 }, [draft.media]);
+
 type MediaMeta = {
-  kind: "image" | "video" | "doc" | "other";
-  sizeMB: number;
+  kind: MediaKind;
   width?: number;
   height?: number;
-  durationSec?: number;
-  name?: string;
+  duration?: number; // s
+  bytes?: number;    // octets
+  sizeMB?: number;   // *** AJOUT ***
+  filename?: string;
+  mime?: string;
 };
 
 const [mediaMeta, setMediaMeta] = useState<MediaMeta[]>([]);
