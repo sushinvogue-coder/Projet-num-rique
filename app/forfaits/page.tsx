@@ -789,7 +789,7 @@ onClick={() => goCheckout("price_1SIZuNKhKf5eqe6euyYmvZtI", "ULTIMATE")}
   <div className="wideActions">
     <button
       className="btn pink small"
-      onClick={() => goCheckout("price_xxx_remplace_moi")}
+onClick={() => goCheckout("price_xxx_remplace_moi", "monthly")}
     >
       Souscrire
     </button>
