@@ -12,6 +12,21 @@ import {
 import { RiThumbUpLine, RiChat3Line, RiRepeat2Line, RiShareForwardLine, RiShareForwardFill, RiSendPlaneLine } from "react-icons/ri";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaYoutube, FaTiktok } from "react-icons/fa";
 import { supabase } from "@/lib/supabaseClient";
+import { CheckCircle, XCircle } from "lucide-react";
+
+// ---- Types média (définition unique, portée module) ----
+type MediaKind = "image" | "video" | "doc" | "other";
+
+type MediaMeta = {
+  kind: MediaKind;
+  width?: number;
+  height?: number;
+  durationSec?: number; // durée vidéo en secondes
+  sizeMB?: number;      // taille en Mo
+  name?: string;        // nom de fichier
+  bytes?: number;       // laissé optionnel (compat)
+  mime?: string;
+};
 
 /** =====================================================
  *  Page "Créer un post" — version desktop (non responsive)
@@ -158,17 +173,6 @@ useEffect(() => {
   setPreviews(urls);
   return () => urls.forEach((u) => URL.revokeObjectURL(u));
 }, [draft.media]);
-
-type MediaMeta = {
-  kind: MediaKind;
-  width?: number;
-  height?: number;
-  durationSec?: number; // secondes (vidéo)
-  sizeMB?: number;      // poids en Mo
-  name?: string;        // nom de fichier (cohérent avec les usages)
-  bytes?: number;
-  mime?: string;
-};
 
 const [mediaMeta, setMediaMeta] = useState<MediaMeta[]>([]);
 const [virtualFormats, setVirtualFormats] = useState<
@@ -3321,7 +3325,6 @@ if (k === "youtube" && flags.hasImage && !flags.hasVideo) {
   if (warn.length)  return { level: "warn",  message: warn[0] };
   return { level: "ok", message: "OK" };
 }
-type MediaKind = "image" | "video" | "doc" | "other";
 
 function extraNetworkChecks(
   k: NetworkKey,
