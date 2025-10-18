@@ -3318,6 +3318,17 @@ if (k === "youtube" && flags.hasImage && !flags.hasVideo) {
   if (warn.length)  return { level: "warn",  message: warn[0] };
   return { level: "ok", message: "OK" };
 }
+type MediaKind = "image" | "video";
+
+type MediaMeta = {
+  kind: MediaKind;
+  width?: number;
+  height?: number;
+  duration?: number; // en secondes (vidéo)
+  bytes?: number;    // taille du fichier
+  filename?: string;
+  mime?: string;
+};
 
 function extraNetworkChecks(
   k: NetworkKey,
