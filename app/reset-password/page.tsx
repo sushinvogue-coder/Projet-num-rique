@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
+const supabase = getSupabaseBrowser();
 
 export default function ResetPasswordPage() {
   const [ready, setReady] = useState(false);

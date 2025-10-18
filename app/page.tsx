@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FaTwitter, FaInstagram, FaFacebook, FaLinkedin, FaYoutube, FaTiktok } from "react-icons/fa";
 import { Calendar, RefreshCw, Package, FastForward, Loader, LaptopMinimalCheck, FilePenLine, BarChart3, PlusCircle, Info, Brain, Wifi, Bell, CheckCircle2, PenTool, Wrench, File, ChevronLeft, ChevronRight } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
+const supabase = getSupabaseBrowser();
 
 // === Helpers de style/rendu identiques à "Créer un post" ===
 type NetworkKey = "x" | "instagram" | "facebook" | "linkedin" | "youtube" | "tiktok";

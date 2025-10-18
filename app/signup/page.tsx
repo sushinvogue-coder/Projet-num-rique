@@ -1,6 +1,7 @@
 'use client';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { useState } from 'react';
+const supabase = getSupabaseBrowser();
 
 export default function SignupPage() {
   const [msg, setMsg] = useState<string | null>(null);

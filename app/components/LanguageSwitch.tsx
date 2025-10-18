@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
+const supabase = getSupabaseBrowser();
 
 const LANGS = [
   { code: "fr", label: "Français", flag: "🇫🇷" },

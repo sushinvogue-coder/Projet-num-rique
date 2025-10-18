@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import { RiThumbUpLine, RiChat3Line, RiRepeat2Line, RiShareForwardLine, RiShareForwardFill, RiSendPlaneLine } from "react-icons/ri";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaYoutube, FaTiktok } from "react-icons/fa";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { CheckCircle, XCircle } from "lucide-react";
+const supabase = getSupabaseBrowser();
 
 // ---- Types média (définition unique, portée module) ----
 type MediaKind = "image" | "video" | "doc" | "other";

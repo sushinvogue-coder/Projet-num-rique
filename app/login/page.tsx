@@ -1,5 +1,6 @@
 'use client';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
+const supabase = getSupabaseBrowser();
 
 export default function LoginPage() {
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {

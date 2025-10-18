@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
+const supabase = getSupabaseBrowser();
 
 type Theme = 'light' | 'dark';
 
