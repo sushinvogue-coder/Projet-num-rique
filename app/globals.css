@@ -2,7 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "./ThemeDebug.css";
+
 
 /* === Racine : pas de scroll global, fond sombre partout === */
 html,

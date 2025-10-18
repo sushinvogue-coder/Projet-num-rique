@@ -30,8 +30,8 @@ function convertToMp4(inPath: string, outPath: string) {
         "-preset veryfast",         // vitesse raisonnable
         "-crf 23"                   // qualité (plus bas = mieux)
       ])
-      .on("error", (err) => reject(err))
-      .on("end", () => resolve())
+.on("error", (err: unknown) => reject(err instanceof Error ? err : new Error(String(err))))
+.on("end", () => resolve())
       .save(outPath);
   });
 }
