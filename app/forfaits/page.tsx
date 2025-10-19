@@ -1262,13 +1262,13 @@ min-width: 0;
         .carouselViewport {
           overflow: hidden;
           width: 100%;
-.carouselViewport + .carouselViewport { margin-top: 10px; }
+	}
+	.carouselViewport + .carouselViewport { margin-top: 10px; }
 
-        }
         .carouselTrack {
           display: inline-flex;
           will-change: transform;
-gap: 12px
+	  gap: 12px;
         }
         .carouselGroup {
           display: inline-flex;
