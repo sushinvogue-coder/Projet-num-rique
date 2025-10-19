@@ -1,6 +1,7 @@
 'use client';
+export const dynamic = 'force-dynamic'; // ✅ évite le prérender côté serveur
+
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
-const supabase = getSupabaseBrowser();
 
 export default function LoginPage() {
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
@@ -14,6 +15,9 @@ export default function LoginPage() {
       alert('Entre ton email et ton mot de passe.');
       return;
     }
+
+    // ✅ créer le client uniquement au moment du clic (côté navigateur)
+    const supabase = getSupabaseBrowser();
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
