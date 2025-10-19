@@ -1,12 +1,12 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, X, } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { useAppSettings } from "@/lib/useAppSettings";
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 /* ---------- Helpers IBAN / BIC ---------- */
@@ -61,6 +61,10 @@ function loadOrgData(id: string): OrgData {
 function saveOrgData(id: string, data: OrgData) { try { localStorage.setItem(`org.data.${id}`, JSON.stringify(data)); } catch {} }
 
 export default function ProfilePage() {
+  const supabase = useMemo(() => createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  ), []);
   /* ------ Sites internet ------- */
   const addSite = () => setData((d) => ({ ...d, sites: [...(d.sites || []), ""] }));
   const setSite = (i: number, v: string) => setData((d) => { const next = [...(d.sites || [])]; next[i] = v; return { ...d, sites: next }; });
