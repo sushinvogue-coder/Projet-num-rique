@@ -1,7 +1,6 @@
 'use client';
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { useState, useMemo } from 'react'; // ✅ ajout de useMemo ici
