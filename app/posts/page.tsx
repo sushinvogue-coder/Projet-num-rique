@@ -1184,12 +1184,30 @@ const text = withShort.length ? withShort.join(" • ") : "OK";
   width: 100%;
   max-width: 1900px;
   margin: 0 auto;
-  transform: translatex(-100px);
+  transform: translateX(-100px);
   padding: 10px 24px 40px;
+
+  /* largeur d'origine (pas de “rétrécissement” du centre) */
   display: grid;
   grid-template-columns: var(--left) 1fr var(--right);
   gap: 16px;
+  align-items: start;
 }
+
+/* colonnes = flex col pour tuer tout effondrement de marge */
+.wrap > .left,
+.wrap > .center,
+.wrap > .right {
+  display: flex;           /* ✅ plus robuste que flow-root */
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;            /* évite tout débordement horizontal */
+}
+
+/* sécurité : pas de marge supérieure “fantôme” sur le 1er panel */
+.wrap > .left   > .panel:first-child,
+.wrap > .center > .panel:first-child,
+.wrap > .right  > .panel:first-child { margin-top: 0 !important; }
 
 .panel {
   position: relative;
