@@ -1180,11 +1180,11 @@ const text = withShort.length ? withShort.join(" • ") : "OK";
   --chip-off: #0f0b13;
   --left: 700px;
   --right: 560px;
---rowH: 600px;
+  --rowH: 600px;
   width: 100%;
   max-width: 1900px;
   margin: 0 auto;
-  transform: translatex(-100px);
+
   padding: 10px 24px 40px;
   display: grid;
   grid-template-columns: var(--left) 1fr var(--right);
