@@ -1,6 +1,9 @@
 // app/create-post/page.tsx
 "use client";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import React, { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -13,7 +16,6 @@ import { RiThumbUpLine, RiChat3Line, RiRepeat2Line, RiShareForwardLine, RiShareF
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaYoutube, FaTiktok } from "react-icons/fa";
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { CheckCircle, XCircle } from "lucide-react";
-const supabase = getSupabaseBrowser();
 
 // ---- Types média (définition unique, portée module) ----
 type MediaKind = "image" | "video" | "doc" | "other";
@@ -41,37 +43,6 @@ type MediaMeta = {
  *  =====================================================
  */
 // ...vos imports
-
-// --- AJOUT : écriture minimale dans la table `posts`
-async function persistPost(
-  kind: "draft" | "schedule" | "publish",
-  draft: Draft
-) {
-  const ws =
-    typeof window !== "undefined"
-      ? localStorage.getItem("currentWorkspaceId") ||
-        localStorage.getItem("workspace_id")
-      : null;
-
-  const now = new Date().toISOString();
-  const row: any = {
-    workspace_id: ws,
-    body: draft?.text || "",
-    status:
-      kind === "publish" ? "published" : kind === "schedule" ? "scheduled" : "draft",
-    created_at: now,
-  };
-
-  if (kind === "publish") row.published_at = now;
-if (kind === "schedule") {
-  const when = draft?.scheduledAt ? new Date(draft.scheduledAt).toISOString() : now;
-  row.scheduled_at = when;
-}
-  const channels = (Object.keys(draft.enabled) as NetworkKey[]).filter(k => draft.enabled[k]);
-  row.channels = channels;
-  row.allow_comments = draft.allowComments;
-  await supabase.from("posts").insert(row);
-}
 
 type NetworkKey = "x" | "instagram" | "facebook" | "linkedin" | "youtube" | "tiktok";
 
@@ -138,6 +109,7 @@ function isPlayableInBrowser(file: File): boolean {
   return byMime || byExt || t === "video/mp4" || t === "video/webm" || t === "video/ogg";
 }
 export default function CreatePostPageDesktop() {
+  const supabase = useMemo(() => getSupabaseBrowser(), []);
   const [draft, setDraft] = useState<Draft>({
     text: "",
     media: [],
@@ -293,6 +265,37 @@ useEffect(() => {
   function toggleNet(k: NetworkKey) {
     setDraft((d) => ({ ...d, enabled: { ...d.enabled, [k]: !d.enabled[k] } }));
   }
+
+// --- AJOUT : écriture minimale dans la table `posts`
+async function persistPost(
+  kind: "draft" | "schedule" | "publish",
+  draft: Draft
+) {
+  const ws =
+    typeof window !== "undefined"
+      ? localStorage.getItem("currentWorkspaceId") ||
+        localStorage.getItem("workspace_id")
+      : null;
+
+  const now = new Date().toISOString();
+  const row: any = {
+    workspace_id: ws,
+    body: draft?.text || "",
+    status:
+      kind === "publish" ? "published" : kind === "schedule" ? "scheduled" : "draft",
+    created_at: now,
+  };
+
+  if (kind === "publish") row.published_at = now;
+if (kind === "schedule") {
+  const when = draft?.scheduledAt ? new Date(draft.scheduledAt).toISOString() : now;
+  row.scheduled_at = when;
+}
+  const channels = (Object.keys(draft.enabled) as NetworkKey[]).filter(k => draft.enabled[k]);
+  row.channels = channels;
+  row.allow_comments = draft.allowComments;
+  await supabase.from("posts").insert(row);
+}
 
 async function submit(kind: "publish" | "draft" | "schedule") {
   // Réseaux cochés
