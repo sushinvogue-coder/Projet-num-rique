@@ -1,9 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+import { useEffect, useState, useMemo } from 'react';
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
-const supabase = getSupabaseBrowser();
 
 export default function ResetPasswordPage() {
+  const supabase = useMemo(() => getSupabaseBrowser(), []);
   const [ready, setReady] = useState(false);
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
