@@ -102,6 +102,11 @@ function badgeStyleForKey(k: NetworkKey): React.CSSProperties {
 function isPlayableInBrowser(file: File): boolean {
   const t = (file.type || "").toLowerCase();
   const ext = (file.name || "").toLowerCase().split(".").pop() || "";
+  // ⬇️ garde DOM
+  if (typeof document === "undefined") {
+    // en cas de doute pendant l’hydratation, on ne bloque pas l’UI
+    return ["mp4","m4v","webm","ogg","ogv"].includes(ext) || t === "video/mp4" || t === "video/webm" || t === "video/ogg";
+  }
   const v = document.createElement("video");
   const byMime = !!t && v.canPlayType(t) !== "";
   const byExt = ["mp4","m4v","webm","ogg","ogv"].includes(ext);
@@ -173,19 +178,25 @@ useEffect(() => {
           });
           return { ...base, kind: "image", width: dim.w, height: dim.h } as MediaMeta;
         }
-        if (f.type?.startsWith("video/")) {
-          const url = URL.createObjectURL(f);
-          const meta = await new Promise<{ w: number; h: number; d: number }>((res) => {
-            const v = document.createElement("video");
-            v.preload = "metadata";
-            v.onloadedmetadata = () => {
-              res({ w: v.videoWidth || 0, h: v.videoHeight || 0, d: v.duration || 0 });
-              URL.revokeObjectURL(url);
-            };
-            v.src = url;
-          });
-          return { ...base, kind: "video", width: meta.w, height: meta.h, durationSec: meta.d } as MediaMeta;
-        }
+if (f.type?.startsWith("video/")) {
+  // Si pas de DOM (rendu serveur / hydratation précoce), on évite document.createElement
+  if (typeof document === "undefined") {
+    return { ...base, kind: "video" } as MediaMeta;
+  }
+
+  const url = URL.createObjectURL(f);
+  const meta = await new Promise<{ w: number; h: number; d: number }>((res) => {
+    const v = document.createElement("video");
+    v.preload = "metadata";
+    v.onloadedmetadata = () => {
+      res({ w: v.videoWidth || 0, h: v.videoHeight || 0, d: v.duration || 0 });
+      URL.revokeObjectURL(url);
+    };
+    v.src = url;
+  });
+  return { ...base, kind: "video", width: meta.w, height: meta.h, durationSec: meta.d } as MediaMeta;
+}
+
         return { ...base, kind: "other" } as MediaMeta;
       })
     );
@@ -270,11 +281,11 @@ async function persistPost(
   kind: "draft" | "schedule" | "publish",
   draft: Draft
 ) {
-  const ws =
-    typeof window !== "undefined"
-      ? localStorage.getItem("currentWorkspaceId") ||
-        localStorage.getItem("workspace_id")
-      : null;
+const ws =
+  typeof window !== "undefined"
+    ? window.localStorage.getItem("currentWorkspaceId") ||
+      window.localStorage.getItem("workspace_id")
+    : null;
 
   const now = new Date().toISOString();
   const row: any = {
@@ -3176,16 +3187,16 @@ if (file?.type?.startsWith("video/")) {
   >
     {(() => {
       const file = items[primary] ?? items[0];
+      const canUseDOM = typeof window !== "undefined" && typeof document !== "undefined";
+
       if (!file?.type?.startsWith("video/")) {
-        // aucun média vidéo sélectionné → message placeholder
         return (
           <div style={{ color:"#9aa0a6", fontWeight:700, textAlign:"center", padding:16 }}>
             Sélectionnez une vidéo pour l’aperçu YouTube.
           </div>
         );
       }
-      if (!isPlayableInBrowser(file)) {
-        // vidéo non lisible → message conversion
+      if (!canUseDOM || !isPlayableInBrowser(file)) {
         return (
           <div style={{ color:"#9aa0a6", fontWeight:700, textAlign:"center", padding:16 }}>
             Format vidéo non lisible par le navigateur (ex : WMV). Conversion requise.
@@ -3208,7 +3219,6 @@ if (file?.type?.startsWith("video/")) {
     })()}
   </div>
 )}
-
 
 { k !== "tiktok" && (
   <div className="pvFooter">
