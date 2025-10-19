@@ -1184,30 +1184,12 @@ const text = withShort.length ? withShort.join(" • ") : "OK";
   width: 100%;
   max-width: 1900px;
   margin: 0 auto;
-  transform: translateX(-100px);
+  transform: translatex(-100px);
   padding: 10px 24px 40px;
-
-  /* largeur d'origine (pas de “rétrécissement” du centre) */
   display: grid;
   grid-template-columns: var(--left) 1fr var(--right);
   gap: 16px;
-  align-items: start;
 }
-
-/* colonnes = flex col pour tuer tout effondrement de marge */
-.wrap > .left,
-.wrap > .center,
-.wrap > .right {
-  display: flex;           /* ✅ plus robuste que flow-root */
-  flex-direction: column;
-  align-items: stretch;
-  min-width: 0;            /* évite tout débordement horizontal */
-}
-
-/* sécurité : pas de marge supérieure “fantôme” sur le 1er panel */
-.wrap > .left   > .panel:first-child,
-.wrap > .center > .panel:first-child,
-.wrap > .right  > .panel:first-child { margin-top: 0 !important; }
 
 .panel {
   position: relative;
@@ -1702,25 +1684,24 @@ select.input.half {
   font-weight: 500;       /* un peu plus marqué pour la lisibilité */
   color: #000;            /* texte noir pour contraste sur fond blanc */
 }
-/* Ajuste uniquement la hauteur de l'encadré "État avant publication" */
-/* Même plancher que les autres panels de la rangée */
+
 .left .panel:nth-of-type(2) {
-  min-height: 368px; /* 🔽 réduction légère pour réaligner visuellement */
-}
-.center .panel:last-of-type {
-  min-height: 520px; /* 🔄 homogène avec la colonne gauche */
+  min-height: 368px;
 }
 
+.center .panel:last-of-type {
+  min-height: 520px;
+}
 
 /* ===== Outils IA — gros boutons ronds 4 + 3 ===== */
 .iaGridRounds{
   display: flex;
   flex-wrap: wrap;
-  gap: 22px 22px;           /* lignes + colonnes */
-  justify-content: center;  /* centre chaque rangée incomplète */
+  gap: 22px 22px;
+  justify-content: center;
 }
 .iaGridRounds .iaItem{
-  width: 110px;             /* même largeur que .iaRound */
+  width: 110px;
 }
 
 .iaItem{
@@ -2718,11 +2699,8 @@ height: 100%;
   background: #000 !important;/* fond 100% noir */
   border-radius: 0 !important;/* pas d’arrondi parasite */
 }
-.left, .center, .right { 
-  align-self: start;
-  display: flow-root;        /* ✅ coupe l’effondrement de marge */
-}
-.center > .panel:first-child { margin-top: 0 !important; }
+.left, .center, .right { align-self: start; }
+.center > .panel:first-child { margin-top: -15px !important; }
 
 
 

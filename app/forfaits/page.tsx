@@ -920,11 +920,13 @@ onClick={() => goCheckout("price_xxx_remplace_moi")}
 }
 
 
-        .container {
-          width: 100%;
-          margin: 0 auto;
-          padding: 16px 24px 44px;
-        }
+.container {
+  width: 100%;
+  max-width: none;   /* neutralise la limite héritée */
+  margin: 0;         /* évite le recentrage contraint */
+  padding: 16px 24px 44px;
+  flex: 1 1 auto;    /* s’étend correctement dans .boutique (flex) */
+}
 
         /* ===== Header ===== */
         .header { margin: 10px 0 20px 0; text-align: center; }
@@ -1209,7 +1211,7 @@ min-width: 0;
         .wideHead { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
         .wideName { font-weight: 900; font-size: 1.10rem; margin-top: 6px; margin-bottom: 1px; }
         .since { font-weight: 700; opacity: .8; }
-        .wideDesc { opacity: .9; font-size: 1rem; margin-bottom: 4px; margin-top: 4px;}
+        .wideDesc { font-weight: 700; color: #000; font-size: 1rem; margin-bottom: 4px; margin-top: 4px; }
         .featMiniList { margin: 0; padding-left: 22px; display: grid; gap: 2px; }
         .featMiniList li { font-weight: 400; opacity: .90; font-size: 15px }
         .wideActions { margin-top: 4px; }
@@ -1287,22 +1289,23 @@ min-width: 0;
           gap: 8px;
           align-items: flex-start;
         }
-        .carouselIcon {
-          width: 42px;
-          height: 42px;
-          border-radius: 10px;
-          border: 1px solid var(--border);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          background: #fafafa;
-        }
-        .addonName { font-weight: 900; font-size: 1.05rem; }
+.carouselIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  color: #000;            /* ← le SVG Lucide hérite et devient bien lisible */
+}
+        .addonName { font-weight: 900; font-size: 1.05rem; color: #000; }
 .addonSmallDesc {
   font-size: .8rem;
   line-height: 1rem;
-  opacity: .8;
-  /* autorise le retour à la ligne et limite à 2 lignes */
+  color: #000;
+  opacity: 1;
   white-space: normal;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1310,8 +1313,6 @@ min-width: 0;
   overflow: hidden;
   word-break: break-word;
 }
-
-
 
         /* ===== Modale ===== */
         .modalOverlay {

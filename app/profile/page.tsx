@@ -346,7 +346,7 @@ function cancelSite() {
     aria-label={showPwd ? "Masquer le mot de passe" : "Afficher le mot de passe"}
     title={showPwd ? "Masquer" : "Afficher"}
   >
-    {showPwd ? <Eye size={18} aria-hidden /> : <EyeOff size={18} aria-hidden />}
+    {showPwd ? <Eye size={22} aria-hidden /> : <EyeOff size={22} aria-hidden />}
   </button>
 </div>
 
@@ -374,7 +374,7 @@ function cancelSite() {
       aria-label={showPwdNew ? "Masquer le mot de passe" : "Afficher le mot de passe"}
       title={showPwdNew ? "Masquer" : "Afficher"}
     >
-      {showPwdNew ? <Eye size={18} aria-hidden /> : <EyeOff size={18} aria-hidden />}
+      {showPwdNew ? <Eye size={22} aria-hidden /> : <EyeOff size={22} aria-hidden />}
     </button>
   </div>
   </div>
@@ -398,7 +398,7 @@ function cancelSite() {
       aria-label={showPwdNew2 ? "Masquer le mot de passe" : "Afficher le mot de passe"}
       title={showPwdNew2 ? "Masquer" : "Afficher"}
     >
-      {showPwdNew2 ? <Eye size={18} aria-hidden /> : <EyeOff size={18} aria-hidden />}
+      {showPwdNew2 ? <Eye size={22} aria-hidden /> : <EyeOff size={22} aria-hidden />}
     </button>                    
 </div>
                   </div>
@@ -752,8 +752,6 @@ function cancelSite() {
   /* ===== Safety: dark scheme + variable fallbacks ===== */
 .profile {
   color-scheme: dark;
-
-  /* Dégradé + image de fond */
   background-image:
     linear-gradient(
       to bottom,
@@ -762,7 +760,8 @@ function cancelSite() {
       rgba(0,0,0,0.65) 70%,
       #000 100%
     ),
-    url("/background/turquoise.jpg"); /* ← tu changeras l’URL par ton image */
+    url("/background/turquoise.jpg");
+  min-height: 100vh; /* assure que le fond est visible sur toute la page */
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
   background-size: cover, cover;
@@ -963,11 +962,15 @@ font-size: 17px
 
   .iconButton {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px; border-radius: 8px;
+    width: 36px; height: 36px; border-radius: 8px;
     border: 1px solid var(--border, rgba(255,255,255,0.10));
     background: #111; color: var(--text, #e6e8ec); cursor: pointer;
   }
-
+/* Taille des pictos dans les .iconButton */
+.iconButton svg {
+  width: 20px;
+  height: 20px;
+}
   .strength { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
   .strength .bar {
     height: 6px; border-radius: 999px; background: #262626;
@@ -981,7 +984,7 @@ font-size: 17px
   .row { display: grid; grid-template-columns: 2fr 1.2fr 1.2fr auto; gap: 10px; padding: 10px 12px; }
   .row:nth-child(odd) { background: #121212; }
   .row:nth-child(even){ background: #101010; }
-  .row.head { background: #0e0e0e; font-weight: 700; color: var(--muted, #a3a7b0); }
+  .row.head { background: #0E0E0E; font-weight: 700; color: var(--muted, #a3a7b0); }
   .row a.btn { padding: 6px 10px; }
   @media (max-width: 720px){
     .row { grid-template-columns: 1fr 1fr; }
@@ -1284,7 +1287,7 @@ display: grid;
 /* L’en-tête reste en haut et s’étire sur toute la largeur */
 .card.tone-orange .table .row.head{
   grid-column: 1 / -1;
-  background: #0e0e0e;
+  background: #0E0E0E;
   border-radius: 12px;
 }
 
@@ -1361,13 +1364,12 @@ display: grid;
 .input:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--text, #000000);
   caret-color: var(--text, #e6e8ec);
-  box-shadow: 0 0 0 1000px #909090 inset;  /* ← mets ici la même couleur de fond que tes autres inputs */
+  box-shadow: 0 0 0 1000px #909090 inset;  /* ← rend les champs gris */
   transition: background-color 9999s ease 0s;
 }
-
 .input:-moz-autofill {
   -moz-text-fill-color: var(--text, #000000);
-  box-shadow: 0 0 0 1000px #909090 inset;  /* idem pour Firefox */
+  box-shadow: 0 0 0 1000px #909090 inset;  /* idem Firefox */
 }
 
 .editBankHeader {
@@ -1413,6 +1415,32 @@ display: grid;
   font-weight: 700;
   opacity: .92;
 }
+/* ——— ICÔNES AGRANDIES ——— */
+.profile .iconButton{
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px;
+  min-height: 48px;
+  flex: 0 0 48px;
+  padding: 0;
+  border-radius: 10px;
+}
+
+/* Pictogrammes internes (crayon + œil + autres) */
+.profile .iconButton > svg{
+  width: 28px !important;
+  height: 28px !important;
+  flex: 0 0 auto;
+  display: block;
+}
+
+/* Uniformise les petits boutons avec cette taille */
+.profile .btn.small,
+.profile .iconButton{
+  height: 48px !important;
+  line-height: 1;
+}
+
 
 `}</style>
 

@@ -1280,8 +1280,14 @@ function closeStatusModal() { setActiveModal(null); }
   --colA: 1.6fr; /* colonne calendrier / barre de tri */
   --colB: 1fr;   /* colonne droite */
   --right-nudge-y: -6px;
+
+}.container {
+  width: 100%;
+  max-width: none;      /* ← annule un éventuel .container global */
+  margin: 0;            /* ← évite le recentrage contraint */
+  padding: 16px 24px 44px;
+  flex: 1 1 auto;       /* ← s’étend correctement dans .planning (flex) */
 }
-        .container { width: 100%; margin: 0 auto; padding: 16px 24px 44px; }
 
         .header { margin: 10px 0 20px 0; text-align: center; }
         .header h1 {
