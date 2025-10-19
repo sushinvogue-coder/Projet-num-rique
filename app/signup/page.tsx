@@ -1,11 +1,15 @@
 'use client';
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
-import { useState } from 'react';
-const supabase = getSupabaseBrowser();
+import { useState, useMemo } from 'react'; // ✅ ajout de useMemo ici
 
 export default function SignupPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const supabase = useMemo(() => getSupabaseBrowser(), []);
 
   async function handleSignup(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,10 +30,7 @@ export default function SignupPage() {
     if (error) {
       setError(error.message);
     } else {
-      // Comme "Confirm email" est activé, on informe l’utilisateur
-      setMsg(
-        "Compte créé ✅ Vérifiez votre boîte mail et cliquez sur le lien pour le confirmer."
-      );
+      setMsg("Compte créé ✅ Vérifiez votre boîte mail et cliquez sur le lien pour le confirmer.");
     }
   }
 
