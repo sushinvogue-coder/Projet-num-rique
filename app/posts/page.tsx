@@ -1184,7 +1184,7 @@ const text = withShort.length ? withShort.join(" • ") : "OK";
   width: 100%;
   max-width: 1900px;
   margin: 0 auto;
-
+  transform: translatex(-100px);
   padding: 10px 24px 40px;
   display: grid;
   grid-template-columns: var(--left) 1fr var(--right);
@@ -2700,7 +2700,8 @@ height: 100%;
   background: #000 !important;/* fond 100% noir */
   border-radius: 0 !important;/* pas d’arrondi parasite */
 }
-
+.left, .center, .right { align-self: start; }
+.center > .panel:first-child { margin-top: 0 !important; }
 
 
 
@@ -3103,7 +3104,6 @@ if (file?.type?.startsWith("video/")) {
   <RiShareForwardFill size={28} color="#fff" />
   <span className="ttCount">43</span>
 </button>
-
 
       {/* Logo TikTok (disque) */}
       <div className="ttDisc">
