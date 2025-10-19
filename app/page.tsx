@@ -1,10 +1,10 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import React, { useEffect, useMemo, useState } from "react";
 import { FaTwitter, FaInstagram, FaFacebook, FaLinkedin, FaYoutube, FaTiktok } from "react-icons/fa";
 import { Calendar, RefreshCw, Package, FastForward, Loader, LaptopMinimalCheck, FilePenLine, BarChart3, PlusCircle, Info, Brain, Wifi, Bell, CheckCircle2, PenTool, Wrench, File, ChevronLeft, ChevronRight } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
-const supabase = getSupabaseBrowser();
 
 // === Helpers de style/rendu identiques à "Créer un post" ===
 type NetworkKey = "x" | "instagram" | "facebook" | "linkedin" | "youtube" | "tiktok";
@@ -48,6 +48,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     (async () => {
+      const supabase = getSupabaseBrowser();
       const { data: auth } = await supabase.auth.getUser();
       const user = auth?.user;
       if (user) setUserName(user.user_metadata?.name || "Utilisateur");
