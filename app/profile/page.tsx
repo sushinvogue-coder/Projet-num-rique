@@ -4,10 +4,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { useEffect, useMemo, useState } from "react";
-import { Eye, EyeOff, X, } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { useAppSettings } from "@/lib/useAppSettings";
-);
 
 /* ---------- Helpers IBAN / BIC ---------- */
 function isValidIBAN(raw: string): boolean {
