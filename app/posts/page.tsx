@@ -2700,7 +2700,10 @@ height: 100%;
   background: #000 !important;/* fond 100% noir */
   border-radius: 0 !important;/* pas d’arrondi parasite */
 }
-.left, .center, .right { align-self: start; }
+.left, .center, .right { 
+  align-self: start;
+  display: flow-root;        /* ✅ coupe l’effondrement de marge */
+}
 .center > .panel:first-child { margin-top: 0 !important; }
 
 
