@@ -1,12 +1,14 @@
 // app/planning/page.tsx
 "use client";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import Link from "next/link";
 import React, { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { ThumbsUp, X, ChevronLeft, ChevronRight, CalendarClock, Target, CalendarDays, Clock } from "lucide-react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaYoutube, FaTiktok } from "react-icons/fa";
-const supabase = getSupabaseBrowser();
 
 /* ============ Utils dates (sans lib) ============ */
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -122,6 +124,7 @@ const PostCarousel = ({ items, onItemClick }: { items: any[], onItemClick?: (p:a
 
 /* ============ Page ============ */
 export default function PlanningPage() {
+  const supabase = useMemo(() => getSupabaseBrowser(), []);
   const [anchor, setAnchor] = useState<Date>(new Date());
 
   // --- Réseaux "toujours visibles" + helpers ---
