@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, Suspense, useState } from "react";
 import { GitCompare, Check, Eye, XCircle, ChevronDown, ChevronUp, Inbox, Headphones,
   Megaphone, Mail, Layers, Store, AppWindow, Zap, Link, FileBarChart2, Hourglass,
 } from "lucide-react";
@@ -275,6 +275,7 @@ async function goCheckout(priceId: string, planKey?: PlanKey) {
 }
 
 return (
+  <Suspense fallback={null}>
     <section className="boutique">
       <div className="container">
         {/* ===== En-tête ===== */}
@@ -1580,5 +1581,6 @@ gap: 12px
 
       `}</style>
     </section>
+  </Suspense>
   );
 }
