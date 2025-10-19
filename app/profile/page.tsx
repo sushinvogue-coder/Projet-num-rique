@@ -59,10 +59,13 @@ function loadOrgData(id: string): OrgData {
 function saveOrgData(id: string, data: OrgData) { try { localStorage.setItem(`org.data.${id}`, JSON.stringify(data)); } catch {} }
 
 export default function ProfilePage() {
-  const supabase = useMemo(() => createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  ), []);
+  const supabase = useMemo(() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return null;           // ← évite l’erreur si ENV absentes
+    return createClient(url, key);
+  }, []);
+
   /* ------ Sites internet ------- */
   const addSite = () => setData((d) => ({ ...d, sites: [...(d.sites || []), ""] }));
   const setSite = (i: number, v: string) => setData((d) => { const next = [...(d.sites || [])]; next[i] = v; return { ...d, sites: next }; });
@@ -120,8 +123,11 @@ const [isEditingUsername, setIsEditingUsername] = useState(false);     // ← AJ
 const [tempUsername, setTempUsername] = useState(username);
 useEffect(() => { setTempUsername(username); }, [username]);           // ← AJOUT
 
-async function saveUsername() {                                        // ← AJOUT
-  // Récupère l’utilisateur courant
+async function saveUsername() {
+  if (!supabase) {                          // ← ajout
+    alert("Configuration Supabase manquante (URL/KEY).");
+    return;
+  }
   const { data: u } = await supabase.auth.getUser();
   if (!u?.user) { alert("Non connecté."); return; }
 
@@ -732,6 +738,11 @@ function cancelSite() {
               ))}
             </div>
           </div>
+{!supabase && (
+  <div className="alert err" style={{ marginTop: 12 }}>
+    ⚠️ Supabase n’est pas configuré (variables NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY absentes).
+  </div>
+)}
         </div>
         {/* /cardsGrid */}
       </div>
