@@ -156,29 +156,49 @@ const [openCard, setOpenCard] = useState<Record<string, boolean>>({});
 const toggleCard = (key: string) =>
   setOpenCard(prev => ({ ...prev, [key]: !prev[key] }));
 // 🔽 AJOUT Stripe — détecte le retour du paiement (AU NIVEAU DU COMPOSANT)
-const searchParams = useSearchParams();
-const router = useRouter();
+// 🔽 AJOUT Stripe — statut paiement (sans useSearchParams ici)
 const [checkoutStatus, setCheckoutStatus] = useState<null | 'success' | 'cancel'>(null);
 
-useEffect(() => {
-  const s = searchParams.get('checkout');
-  if (s === 'success' || s === 'cancel') {
-    if (s === 'success') {
-      try {
-        const intended = localStorage.getItem("intendedPlan") as PlanKey | null;
-        if (intended) {
-          setCurrentPlan(intended);
-          localStorage.setItem("currentPlan", intended);
-        }
-      } catch {}
-      setCheckoutStatus('success');              // ← affiche la modale ✅
-    } else {
-      setCheckoutStatus('cancel');               // ← affiche la modale d’annulation
+function handleCheckoutSuccess() {
+  try {
+    const intended = localStorage.getItem("intendedPlan") as PlanKey | null;
+    if (intended) {
+      setCurrentPlan(intended);
+      localStorage.setItem("currentPlan", intended);
     }
-    try { localStorage.removeItem("intendedPlan"); } catch {} // ← hygiène
-    setTimeout(() => router.replace('/forfaits', { scroll: false }), 0); // ← nettoie l’URL sans flinguer la modale
-  }
-}, [searchParams, router]);
+  } catch {}
+  setCheckoutStatus('success');
+  try { localStorage.removeItem("intendedPlan"); } catch {}
+}
+
+function handleCheckoutCancel() {
+  setCheckoutStatus('cancel');
+  try { localStorage.removeItem("intendedPlan"); } catch {}
+}
+
+function CheckoutWatcher({
+  onSuccess,
+  onCancel,
+}: {
+  onSuccess: () => void;
+  onCancel: () => void;
+}) {
+  const searchParams = useSearchParams();   // ✅ hook dans l’enfant
+  const router = useRouter();
+
+  useEffect(() => {
+    const s = searchParams.get('checkout');
+    if (s === 'success') {
+      onSuccess();
+      setTimeout(() => router.replace('/forfaits', { scroll: false }), 0);
+    } else if (s === 'cancel') {
+      onCancel();
+      setTimeout(() => router.replace('/forfaits', { scroll: false }), 0);
+    }
+  }, [searchParams, router, onSuccess, onCancel]);
+
+  return null; // composant “sentinelle”, pas d’UI
+}
 
 // 🔼 FIN AJOUT Stripe
 
@@ -276,6 +296,10 @@ async function goCheckout(priceId: string, planKey?: PlanKey) {
 
 return (
   <Suspense fallback={null}>
+    <CheckoutWatcher
+      onSuccess={handleCheckoutSuccess}
+      onCancel={handleCheckoutCancel}
+    />
     <section className="boutique">
       <div className="container">
         {/* ===== En-tête ===== */}
