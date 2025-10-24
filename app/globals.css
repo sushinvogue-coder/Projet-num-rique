@@ -52,9 +52,9 @@ a:active {
 
 /* ======= Utilitaires ======= */
 .card {
-  @apply rounded-xl border p-4 shadow;
+  @apply rounded-xl p-4 shadow;
   background: var(--card-bg);
-  border-color: var(--border);
+  border: 0;
   color: var(--text);
 }
 
@@ -130,18 +130,15 @@ select:-webkit-autofill {
 /* ==== Fond sombre garanti, même si un conteneur est transparent ==== */
 html, body { background: var(--bg-main) !important; }
 .shell, .main { background: var(--bg-main) !important; }
-section.profile, section.profile .container, section.profile .cardsGrid {
-  background: var(--bg-main) !important;
-}
+/* ⛔ supprimé : section.profile… qui écrasait l’image de fond */
 
 /* === FOND SOMBRE DÉFINITIF, quoi qu'il arrive === */
 :root, html, body, #__next,
-.shell, .main,
-section.profile,
-section.profile .container,
-section.profile .cardsGrid {
+.shell, .main {
   background: var(--bg-main) !important;
 }
+/* ⛔ supprimé : section.profile… ici aussi */
+
 
 /* ===== Harmonisation largeur/hauteur et alignements fins ===== */
 /* Hauteur standard pour toutes les lignes (champs + boutons) */
@@ -155,6 +152,8 @@ section.profile .cardsGrid {
   align-items: center;
   gap: 8px;
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Le contenu “texte” s’étire, l’icône/crayon reste compact */
@@ -324,8 +323,6 @@ input[disabled],
   height: calc(var(--row-h-final) - 2px) !important; /* compense la bordure de 1px top+bottom */
   padding: 0 10px !important;
   border-radius: 10px;
-  background: #111 !important;
-  color: var(--text, #e6e8ec) !important;
 }
 
 /* Static boxes (affichage non-éditable) : idem look que les inputs */
@@ -474,3 +471,15 @@ section.boutique .panels {
 
 .addon-title { font-weight: 600; font-size: .95rem; line-height: 1.15rem; }
 .addon-desc  { font-size: .78rem; line-height: 1rem; opacity: .7; }
+
+/* Profile : boutons sans fond plein pour éviter le "carré noir" */
+section.profile .btn,
+section.profile a.btn {
+  background: transparent !important;
+     border: 1px solid var(--border);
+}
+section.profile .btn.icon,
+section.profile .btn.ghost,
+section.profile .btn.small {
+  background: transparent !important;
+}

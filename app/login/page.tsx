@@ -24,7 +24,7 @@ export default function LoginPage() {
       alert(error.message);
       return;
     }
-    window.location.href = '/posts';
+    window.location.href = '/';
   }
 
   return (

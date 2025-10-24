@@ -1,5 +1,6 @@
 "use client";
 
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, Suspense, useState } from "react";
 import { GitCompare, Check, Eye, XCircle, ChevronDown, ChevronUp, Inbox, Headphones,
@@ -96,16 +97,15 @@ const availableAddons: Addon[] = [
 
 type PlanKey = "STARTER" | "PRO" | "BUSINESS" | "ULTIMATE";
 
-const [currentPlan, setCurrentPlan] = useState<PlanKey>("PRO");
+const [currentPlan, setCurrentPlan] = useState<PlanKey>("" as PlanKey);
 
 // Hydrate depuis le stockage (si déjà choisi avant)
 useEffect(() => {
   try {
     const saved = localStorage.getItem("currentPlan") as PlanKey | null;
-    if (saved) setCurrentPlan(saved);
+    if (saved) setCurrentPlan(saved.toUpperCase() as PlanKey);
   } catch {}
 }, []);
-
 
 // AJOUT — état d’ouverture de la modale "Comparer"
 const [compareOpen, setCompareOpen] = useState(false);
@@ -159,15 +159,36 @@ const toggleCard = (key: string) =>
 // 🔽 AJOUT Stripe — statut paiement (sans useSearchParams ici)
 const [checkoutStatus, setCheckoutStatus] = useState<null | 'success' | 'cancel'>(null);
 
-function handleCheckoutSuccess() {
+async function handleCheckoutSuccess() {
+  // 1) Lire le plan visé et le normaliser
+  let up: PlanKey | "" = "";
   try {
     const intended = localStorage.getItem("intendedPlan") as PlanKey | null;
     if (intended) {
-      setCurrentPlan(intended);
-      localStorage.setItem("currentPlan", intended);
+      up = intended.toUpperCase() as PlanKey;
+      setCurrentPlan(up);
+      localStorage.setItem("currentPlan", up);
     }
   } catch {}
-  setCheckoutStatus('success');
+
+  // 2) UI : afficher le succès
+  setCheckoutStatus("success");
+
+  // 3) Persister aussi côté Supabase si possible
+  try {
+    if (up) {
+      const supabase = getSupabaseBrowser();
+      const { data: auth } = await supabase.auth.getUser();
+      const user = auth?.user;
+      if (user) {
+        await supabase.from("profiles").update({ plan: up }).eq("id", user.id);
+      }
+    }
+  } catch (err) {
+    console.error("Erreur de mise à jour du plan Supabase :", err);
+  }
+
+  // 4) Nettoyage
   try { localStorage.removeItem("intendedPlan"); } catch {}
 }
 
@@ -273,11 +294,10 @@ useEffect(() => {
 
 // AJOUT Stripe — helper front
 async function goCheckout(priceId: string, planKey?: PlanKey) {
-  const chosen = (planKey ?? "monthly") as PlanKey; // défaut sûr
-
-  try {
-    localStorage.setItem("intendedPlan", chosen); // on retient le forfait visé
-  } catch {}
+const chosen = (planKey ?? "monthly") as PlanKey;
+try {
+  localStorage.setItem("intendedPlan", (chosen as string).toUpperCase());
+} catch {}
 
   const r = await fetch("/api/stripe/create-checkout-session", {
     method: "POST",

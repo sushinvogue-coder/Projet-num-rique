@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 
 import React, { useEffect, useMemo, useState } from "react";
 import { FaTwitter, FaInstagram, FaFacebook, FaLinkedin, FaYoutube, FaTiktok } from "react-icons/fa";
-import { Calendar, RefreshCw, Package, FastForward, Loader, LaptopMinimalCheck, FilePenLine, BarChart3, PlusCircle, Info, Brain, Wifi, Bell, CheckCircle2, PenTool, Wrench, File, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, RefreshCw, Package, FastForward, Loader, LaptopMinimalCheck, FilePenLine, BarChart3, Info, Brain, Wifi, Bell, PenTool, Wrench, File, ChevronLeft, ChevronRight } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
 
 // === Helpers de style/rendu identiques à "Créer un post" ===
@@ -41,10 +41,21 @@ if (k === "tiktok")
  */
 export default function DashboardPage() {
   const [userName, setUserName] = useState<string>("Utilisateur");
+  const [currentPlan, setCurrentPlan] = useState<string>("");
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<"7" | "15" | "30">("7");
   const [perfModal, setPerfModal] = useState<any|null>(null);
+const [alerts, setAlerts] = useState<any[]>([]);
+const [notifs, setNotifs] = useState<any[]>([]);
+const [connections, setConnections] = useState<Record<NetworkKey, boolean>>({
+  facebook:  false,
+  instagram: false,
+  linkedin:  false,
+  x:         false,
+  youtube:   false,
+  tiktok:    false,
+});
 
   useEffect(() => {
     (async () => {
@@ -59,8 +70,107 @@ export default function DashboardPage() {
         .order("created_at", { ascending: false })
         .limit(10);
       setPosts(data || []);
+    if (user) {
+      const { data: a } = await supabase
+        .from("alerts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(6);
+      setAlerts(a || []);
+
+      const { data: n } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(6);
+      setNotifs(n || []);
+    }
+    if (user) {
+      const { data: rows } = await supabase
+        .from("social_accounts")
+        .select("provider, connected")
+        .eq("user_id", user.id);
+
+      const map: Record<NetworkKey, boolean> = {
+        facebook:  false,
+        instagram: false,
+        linkedin:  false,
+        x:         false,
+        youtube:   false,
+        tiktok:    false,
+      };
+      (rows || []).forEach((r: any) => {
+        const k = r.provider as NetworkKey;
+        if (k in map) map[k] = !!r.connected;
+      });
+      setConnections(map);
+    }
       setLoading(false);
     })();
+  }, []);
+
+  // === AJOUT : synchroniser le plan (Supabase + localStorage + retour onglet) ===
+  useEffect(() => {
+    const supabase = getSupabaseBrowser();
+
+    const loadPlan = async () => {
+      try {
+        const { data: auth } = await supabase.auth.getUser();
+        const user = auth?.user;
+
+        // 1) Tente d'abord Supabase (profiles.plan)
+        let plan = "";
+        if (user) {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("plan")
+            .eq("id", user.id)
+            .single();
+          plan = (prof?.plan || "") as string;
+        }
+
+        // 2) Fallback localStorage (écrit par la Boutique)
+        if (!plan && typeof window !== "undefined") {
+          plan = localStorage.getItem("currentPlan") || "";
+        }
+
+        if (plan) setCurrentPlan(plan.toUpperCase());
+      } catch {
+        // en cas d'erreur, on tente au moins le localStorage
+        try {
+          const v = localStorage.getItem("currentPlan");
+          if (v) setCurrentPlan(v.toUpperCase());
+        } catch {}
+      }
+    };
+
+    // Charger maintenant
+    loadPlan();
+
+    // Se mettre à jour si un autre onglet / la Boutique change le plan
+const onStorage = (e: StorageEvent) => {
+  if (e.key === "currentPlan") {
+    const v = e.newValue || "";
+    setCurrentPlan(v ? v.toUpperCase() : "");
+  }
+};
+
+    // Quand on revient sur l’onglet Accueil depuis /forfaits
+const onVisible = () => {
+  if (document.visibilityState === "visible") {
+    const v = localStorage.getItem("currentPlan") || "";
+    setCurrentPlan(v ? v.toUpperCase() : "");
+  }
+};
+
+    window.addEventListener("storage", onStorage);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, []);
 
   const stats = useMemo(() => ({
@@ -127,6 +237,58 @@ const topPerformers = useMemo(() => {
   );
   return withScore.slice(0, 10);
 }, [posts]);
+const suggestions = useMemo(() => computeSuggestions(posts, stats, topPerformers), [posts, stats, topPerformers]);
+
+// === Étape A : générer dynamiquement les suggestions IA ===
+function computeSuggestions(
+  posts: any[],
+  stats: { total: number; published: number; scheduled: number; drafts: number },
+  top: any[]
+) {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(now.getDate() - 7);
+
+  const hasRecentPublish = posts.some(
+    (p) => p.status === "published" && new Date(p.created_at) >= sevenDaysAgo
+  );
+
+  const suggestions: Array<{ icon: React.ReactNode; text: string; href: string }> = [];
+
+  if (!hasRecentPublish) {
+    suggestions.push({
+      icon: <RefreshCw size={20} />,
+      text: "Publie cette semaine pour relancer l’activité.",
+      href: "/posts",
+    });
+  }
+
+  if (stats.scheduled === 0) {
+    suggestions.push({
+      icon: <Calendar size={20} />,
+      text: "Programme un post demain à la meilleure période d'audience.",
+      href: "/planning",
+    });
+  }
+
+  if (top && top.length > 0) {
+    suggestions.push({
+      icon: <PenTool size={20} />,
+      text: "Republie ton meilleur post pour maximiser sa portée.",
+      href: "/posts",
+    });
+  }
+
+  if (stats.drafts > 0) {
+    suggestions.push({
+      icon: <FilePenLine size={20} />,
+      text: "Finalise tes brouillons en attente.",
+      href: "/posts",
+    });
+  }
+
+  return suggestions.slice(0, 3);
+}
 
 // Carousel avec flèches + placeholder même sans posts
 const PostCarousel = ({ items, onItemClick }: { items: any[], onItemClick?: (p:any)=>void }) => {
@@ -187,16 +349,9 @@ const PostCarousel = ({ items, onItemClick }: { items: any[], onItemClick?: (p:a
   );
 };
 
-  const connected: Record<NetworkKey, boolean> = {
-    facebook:  true,
-    instagram: true,
-    linkedin:  true,
-    x:         false,
-    youtube:   false,
-    tiktok:    true,
-  };
-  const order: NetworkKey[] = ["facebook", "instagram", "linkedin", "x", "youtube", "tiktok"];
-  const missing = order.filter(k => !connected[k]);
+const connected: Record<NetworkKey, boolean> = connections;
+const order: NetworkKey[] = ["facebook", "instagram", "linkedin", "x", "youtube", "tiktok"];
+const missing = useMemo(() => order.filter(k => !connected[k]), [connected]);
 
   return (
     <section className="d-dashboard">
@@ -236,7 +391,7 @@ const PostCarousel = ({ items, onItemClick }: { items: any[], onItemClick?: (p:a
 
           {/* (3) Programmés */}
           <div className="d-card d-tone">
-<h2 className="d-tag"><Loader size={20}/>Posts programmés</h2>
+<h2 className="d-tag"><Loader size={20}/> Posts programmés</h2>
 <div className="d-split">
   <div className="d-leftBox">
     <p className="d-num">{stats.scheduled}</p>
@@ -248,7 +403,7 @@ const PostCarousel = ({ items, onItemClick }: { items: any[], onItemClick?: (p:a
 
           {/* (4) Brouillons */}
           <div className="d-card d-tone">
-<h2 className="d-tag"><File size={20}/>Brouillons</h2>
+<h2 className="d-tag"><File size={20}/> Brouillons</h2>
 <div className="d-split">
   <div className="d-leftBox">
     <p className="d-num">{stats.drafts}</p>
@@ -361,14 +516,29 @@ const PostCarousel = ({ items, onItemClick }: { items: any[], onItemClick?: (p:a
 )}
   </div>
 
-  <div className="d-card d-tone">
-    <h2 className="d-tag"><Brain size={20}/> Suggestions IA</h2>
-<div className="d-listIcons" role="list">
-  <div className="d-line" role="listitem"><RefreshCw size={20}/> Republie ton dernier post sur LinkedIn pour maximiser sa portée.</div>
-  <div className="d-line" role="listitem"><Calendar  size={20}/> Programme ton prochain post entre 18h et 20h.</div>
-  <div className="d-line" role="listitem"><PenTool   size={20}/> Utilise le module “IA rédaction” pour booster ton engagement.</div>
+<div className="d-card d-tone">
+  <h2 className="d-tag"><Brain size={20}/> Suggestions IA</h2>
+
+  {suggestions.length === 0 ? (
+    <div className="d-emptyCenter">
+      <p className="d-textMuted">Aucune suggestion pour le moment.</p>
+    </div>
+  ) : (
+    <div className="d-listIcons" role="list">
+      {suggestions.map((s, i) => (
+        <a
+          key={i}
+          href={s.href}
+          className="d-line"
+          role="listitem"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          {s.icon} {s.text}
+        </a>
+      ))}
+    </div>
+  )}
 </div>
-  </div>
 
   <div className="d-card d-tone">
     <h2 className="d-tag"><Wifi size={20}/> Réseaux connectés</h2>
@@ -418,38 +588,70 @@ const PostCarousel = ({ items, onItemClick }: { items: any[], onItemClick?: (p:a
 
 {/* Alertes + Notifications + Forfait utilisateur (3 colonnes alignées) */}
 <div className="d-grid d-four">
-  <div className="d-card d-tone">
-    <h2 className="d-tag"><Bell size={20}/> Alertes</h2>
-<div className="d-emptyCenter">
-<div className="d-emptyCenter">
-  <p className="d-textMuted">Aucune alerte récente.</p>
+<div className="d-card d-tone">
+  <h2 className="d-tag"><Bell size={20}/> Alertes</h2>
+
+  {alerts.length === 0 ? (
+    <div className="d-emptyCenter">
+      <p className="d-textMuted">Aucune alerte récente.</p>
+    </div>
+  ) : (
+    <ul className="d-listSmall">
+      {alerts.map(a => (
+        <li key={a.id}>
+          <strong>{a.title}</strong>
+          <div>{a.message}</div>
+          <span className="d-textMuted">
+            {new Date(a.created_at).toLocaleString()} {a.severity ? `• ${a.severity}` : ""}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )}
 </div>
 
+<div className="d-card d-tone">
+  <h2 className="d-tag"><Info size={20}/> Notifications</h2>
+
+  {notifs.length === 0 ? (
+    <div className="d-emptyCenter">
+      <span className="d-textMuted">Aucune notification.</span>
+    </div>
+  ) : (
+    <ul className="d-listSmall">
+      {notifs.map(n => (
+        <li key={n.id}>
+          <strong>{n.title}</strong>
+          <div>{n.message}</div>
+          <span className="d-textMuted">
+            {new Date(n.created_at).toLocaleString()}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )}
 </div>
-
-  </div>
-
-  <div className="d-card d-tone">
-    <h2 className="d-tag"><Info size={20}/> Notifications</h2>
-<div className="d-emptyCenter">
-  <span className="d-textMuted">Aucune notification.</span>
-</div>
-
-  </div>
 
   <div className="d-card d-tone">
 <h2 className="d-tag"><Package size={20}/> Forfait utilisateur</h2>
 <div className="d-planGrid">
   {/* Colonne gauche : mini carte blanche */}
   <div className="d-planLeft">
-    <div className="d-miniCard">
-      <span className="d-miniTop">PRO</span>
-<span className="d-miniBottom">
-  <small>mensuel</small>
-  <strong>29,90 €</strong>
-</span>
+<div className="d-miniCard">
+  <span className="d-miniTop">{currentPlan}</span>
+  <div className="d-miniBottom">
+    <small>mensuel</small>
+    <strong>
+      {currentPlan === "STARTER" ? "19,90 €" :
+       currentPlan === "PRO" ? "49,90 €" :
+       currentPlan === "BUSINESS" ? "99,90 €" :
+       currentPlan === "ULTIMATE" ? "149,90 €" :
+       ""}
+    </strong>
+  </div>
+</div>
 
-    </div>
+
   </div>
 
   {/* Colonne milieu : petite liste des options */}
@@ -956,12 +1158,12 @@ border: 2px solid #1C4DD7;
 }
 .d-miniBottom small {
   display: block;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
 }
 .d-miniBottom strong {
   display: block;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 800;
 }
 

@@ -256,20 +256,29 @@ function togglePref(key: string, next: boolean) {
         </ul>
 
         <div className="logout">
-          <Link
-            href="/login"
-            className="menu-link"
-            style={
-              {
-                ["--hover-color" as any]: `${ICON_COLORS["__logout"]}33`,
-                ["--active-bg" as any]: `${ICON_COLORS["__logout"]}26`,
-                ["--active-ring" as any]: ICON_COLORS["__logout"],
-              } as React.CSSProperties
-            }
-          >
-            <LogOut size={40} color={ICON_COLORS["__logout"]} />
-            <span className="menu-text">Déconnexion</span>
-          </Link>
+<button
+  onClick={async () => {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    await supabase.auth.signOut();
+    window.location.href = "/login"; // ou "/" si ta page publique est à la racine
+  }}
+  className="menu-link"
+  style={
+    {
+      ["--hover-color" as any]: `${ICON_COLORS["__logout"]}33`,
+      ["--active-bg" as any]: `${ICON_COLORS["__logout"]}26`,
+      ["--active-ring" as any]: ICON_COLORS["__logout"],
+    } as React.CSSProperties
+  }
+>
+  <LogOut size={40} color={ICON_COLORS["__logout"]} />
+  <span className="menu-text">Déconnexion</span>
+</button>
+
         </div>
       </nav>
     </aside>
@@ -284,9 +293,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={inter.className} style={{ overflow: "hidden", background: "var(--bg-main)" }}>
         <div className="shell">
           <Sidebar />
-          <main className="main" role="main">
-            {children}
-          </main>
+<main className="main" role="main">
+  {children}
+</main>
         </div>
 
         {/* Styles layout (scopés au layout) */}
@@ -457,6 +466,26 @@ margin-bottom: 10px
   min-height: 36px;  /* tu peux tester 38px ou 40px si tu veux plus aéré */
   line-height: 1.4;
 }
+.menu-link {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #d4d4d8;
+  text-decoration: none;
+  transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+  cursor: pointer; /* important pour le bouton */
+width: 100%;
+box-sizing: border-box;
+}
+
         `}</style>
       </body>
     </html>
