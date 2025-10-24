@@ -213,212 +213,161 @@ function cancelSite() {
         {/* ======= GRID PRINCIPALE ======= */}
         <div className="cardsGrid">
 
-          {/* 1) Informations & Sécurité (fusion, 2 colonnes) */}
-          <div className="card tone-blue span2">
-            <h2 className="tag tag-account">Informations & Sécurité du compte</h2>
+{/* 1A) Informations */}
+<div className="card tone-blue">
+  <h2 className="tag tag-account">Informations</h2>
+  <div className="grid two equalCols">
+        {/* Tout le contenu de la colonne gauche */}
+        <div className="field">
+          <label>ID utilisateur :</label>
+          <div className="staticBox"><span className="staticText">ID-000000</span></div>
+        </div>
+        <div className="field">
+          <label>Date de création :</label>
+          <div className="staticBox"><span className="staticText">—</span></div>
+        </div>
 
-            <div className="grid two equal">
-              {/* Colonne GAUCHE — Informations */}
-              <div className="col leftCol">
-                <div className="grid two">
-                  <div className="field">
-                    <label>ID utilisateur :</label>
-                    <div className="staticBox"><span className="staticText">ID-000000</span></div>
-                  </div>
-                  <div className="field">
-                    <label>Date de création :</label>
-                    <div className="staticBox"><span className="staticText">—</span></div>
-                  </div>
+        <div className="field">
+          <label>Nom complet :</label>
+          {!isEditingName ? (
+            <div className="staticRow nameRowStatic">
+              <div className="staticBox"><span className="staticText">{fullName}</span></div>
+              <button className="iconButton tight" onClick={() => setEditingName(true)} title="Modifier le nom">
+                <PencilIcon />
+              </button>
+            </div>
+          ) : (
+            <div className="editRow nameRowEdit">
+              <div className="controlPanel">
+                <input className="input lightOnDark" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Votre nom complet" />
+              </div>
+              <div className="editActions">
+                <button className="btn small" onClick={() => { setEditingName(false); }}>Enregistrer</button>
+                <button className="btn small" onClick={() => { setEditingName(false); setPwdName(""); }}>Annuler</button>
+              </div>
+            </div>
+          )}
+        </div>
 
-                  {/* Nom complet */}
-                  <div className="field">
-                    <label>Nom complet :</label>
-                    {!isEditingName ? (
-                      <div className="staticRow nameRowStatic">
-                        <div className="staticBox"><span className="staticText">{fullName}</span></div>
-                        <button className="iconButton tight" onClick={() => setEditingName(true)} title="Modifier le nom">
-                          <PencilIcon />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="editRow nameRowEdit">
-                        <div className="controlPanel">
-                          <input className="input lightOnDark" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Votre nom complet" />
-                        </div>
+        <div className="field">
+          <label>Email :</label>
+          {!isEditingEmail ? (
+            <div className="staticRow emailRowStatic">
+              <div className="staticBox"><span className="staticText">{email}</span></div>
+              <button className="iconButton tight" onClick={() => setEditingEmail(true)} title="Modifier l’email">
+                <PencilIcon />
+              </button>
+            </div>
+          ) : (
+            <div className="editRow emailRowEdit">
+              <div className="controlPanel">
+                <input className="input lightOnDark" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="votre@email.com" />
+              </div>
+              <div className="editActions">
+                <button className="btn small" onClick={() => { setEditingEmail(false); }}>Enregistrer</button>
+                <button className="btn small" onClick={() => { setEditingEmail(false); setPwdMail(""); }}>Annuler</button>
+              </div>
+            </div>
+          )}
+        </div>
 
-                        <div className="editActions">
-<button className="btn small" onClick={() => { setEditingName(false); }}>Enregistrer</button>
-                          <button className="btn small" onClick={() => { setEditingName(false); setPwdName(""); }}>Annuler</button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+        <div className="field">
+          <label>Nom d’utilisateur :</label>
+          {!isEditingUsername ? (
+            <div className="staticRow nameRowStatic">
+              <div className="staticBox"><span className="staticText">{username || "—"}</span></div>
+              <button className="iconButton tight" title="Modifier" onClick={() => setIsEditingUsername(true)}>
+                <PencilIcon />
+              </button>
+            </div>
+          ) : (
+            <div className="editRow nameRowEdit">
+              <div className="controlPanel">
+                <input className="input lightOnDark" value={tempUsername} onChange={(e) => setTempUsername(e.target.value)} placeholder="Votre nom d’utilisateur" />
+              </div>
+              <div className="editActions">
+                <button className="btn small" onClick={saveUsername}>Enregistrer</button>
+                <button className="btn small" onClick={cancelUsernameEdit}>Annuler</button>
+              </div>
+            </div>
+          )}
+        </div>
 
-                  {/* Email */}
-                  <div className="field">
-                    <label>Email :</label>
-                    {!isEditingEmail ? (
-                      <div className="staticRow emailRowStatic">
-                        <div className="staticBox"><span className="staticText">{email}</span></div>
-                        <button className="iconButton tight" onClick={() => setEditingEmail(true)} title="Modifier l’email">
-                          <PencilIcon />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="editRow emailRowEdit">
-                        <div className="controlPanel">
-                          <input className="input lightOnDark" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="votre@email.com" />
-                        </div>
-
-                        <div className="editActions">
-<button className="btn small" onClick={() => { setEditingEmail(false); }}>Enregistrer</button>
-                          <button className="btn small" onClick={() => { setEditingEmail(false); setPwdMail(""); }}>Annuler</button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-{/* Username */}
-<div className="field">
-  <label>Nom d’utilisateur :</label>
-
-{!isEditingUsername ? (
-  <div className="staticRow nameRowStatic">
-    <div className="staticBox">
-      <span className="staticText">{username || "—"}</span>
-    </div>
-    <button className="iconButton tight" title="Modifier" onClick={() => setIsEditingUsername(true)}>
-      <PencilIcon />
-    </button>
-  </div>
-) : (
-  <div className="editRow nameRowEdit">
-    <div className="controlPanel">
-      <input
-        className="input lightOnDark"
-        value={tempUsername}
-        onChange={(e) => setTempUsername(e.target.value)}
-        placeholder="Votre nom d’utilisateur"
-      />
-    </div>
-    <div className="editActions">
-      <button className="btn small" onClick={saveUsername}>Enregistrer</button>
-      <button className="btn small" onClick={cancelUsernameEdit}>Annuler</button>
-    </div>
-  </div>
-)}
-
-</div>
-
-
-
-		  {/* Abonnement — inline (prend une colonne, même style carte compacte) */}
 <div className="field">
   <label>Abonnement :</label>
-  <div className="subcard sub-account compact">
-    <span className="staticText">
-      Forfait actuel - <strong>"STARTER"</strong>
-    </span>
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "6px" }}>
+    <span className="staticText"><strong>"FORFAIT STARTER"</strong></span>
     <a href="/forfaits" className="btn small">Changer de forfait</a>
   </div>
 </div>
-                </div>
-              </div>
 
-              {/* Colonne DROITE — Sécurité */}
-              <div className="col">
-                <div className="grid two">
-                  <div className="field">
-                    <label>Mot de passe actuel :</label>
-<div className="controlPanel nochrome">
-  <input
-    className="input lightOnDark"
-    type={showPwd ? "text" : "password"}
-    value={pwdCurrent}
-    onChange={(e) => setPwdCurrent(e.target.value)}
-    autoComplete="current-password"
-    placeholder="••••••••"
-  />
-  <button
-    type="button"
-    className="iconButton tight"
-    onClick={() => setShowPwd(!showPwd)}
-    aria-label={showPwd ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-    title={showPwd ? "Masquer" : "Afficher"}
-  >
-    {showPwd ? <Eye size={22} aria-hidden /> : <EyeOff size={22} aria-hidden />}
-  </button>
+      </div>
 </div>
 
-                  </div>
+{/* 1B) Sécurité */}
+<div className="card tone-blue">
+  <h2 className="tag tag-account">Sécurité</h2>
+  <div className="grid two equalCols">
+        {/* Tout le contenu de la colonne droite */}
 <div className="field">
-  <label>Nouveau mot de passe :</label>
-  <div className="controlPanel pwd inline nochrome">
-<input
-  className="input lightOnDark"
-  type={showPwdNew ? "text" : "password"}
-  value={pwdNew}
-  onChange={(e) => setPwdNew(e.target.value)}
-  autoComplete="new-password"
-/>
-
-    <div className="strengthInline" aria-hidden>
-      <div className="bar" data-on={pwdStrong >= 1} />
-      <div className="bar" data-on={pwdStrong >= 3} />
-      <div className="bar" data-on={pwdStrong >= 5} />
+  <label>Mot de passe actuel :</label>
+  <div className="staticRow nameRowStatic">
+    <div className="staticBox">
+      <span className="staticText">
+        {showPwd
+          ? (pwdCurrent || "—")         // affiché en clair si disponible
+          : (pwdCurrent ? "••••••••" : "—")}  // masqué sinon
+      </span>
     </div>
-<button
-      type="button"
-      className="iconButton tight"
-      onClick={() => setShowPwdNew(!showPwdNew)}
-      aria-label={showPwdNew ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-      title={showPwdNew ? "Masquer" : "Afficher"}
-    >
-      {showPwdNew ? <Eye size={22} aria-hidden /> : <EyeOff size={22} aria-hidden />}
-    </button>
-  </div>
-  </div>
-
-
-                  <div className="field">
-                    <label>Confirmer le nouveau mot de passe :</label>
-                    <div className="controlPanel nochrome">
-                      <input
-  className="input lightOnDark"
-  type={showPwdNew2 ? "text" : "password"}
-  value={pwdNew2}
-  onChange={(e) => setPwdNew2(e.target.value)}
-  autoComplete="new-password"
-/>
-
     <button
       type="button"
       className="iconButton tight"
-      onClick={() => setShowPwdNew2(!showPwdNew2)}
-      aria-label={showPwdNew2 ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-      title={showPwdNew2 ? "Masquer" : "Afficher"}
+      onClick={() => setShowPwd(!showPwd)}
+      title={showPwd ? "Masquer" : "Afficher"}
     >
-      {showPwdNew2 ? <Eye size={22} aria-hidden /> : <EyeOff size={22} aria-hidden />}
-    </button>                    
+      {showPwd ? <Eye style={{ width: 32, height: 32 }} /> : <EyeOff style={{ width: 32, height: 32 }} />}
+    </button>
+  </div>
 </div>
-                  </div>
-                  <div className="field twofarow">
-                    <label>Double authentification (2FA)</label>
-                    <div className="controlPanel inline">
-                      <input id="twofa" type="checkbox" checked={twoFA} onChange={(e) => setTwoFA(e.target.checked)} />
-                      <label htmlFor="twofa" style={{ margin: 0 }}>Activer l’Authenticator</label>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="verifyRow">
-                  <button className="btn small" disabled={!pwdCurrent || !pwdNew || pwdNew !== pwdNew2}>
-                    Mettre à jour
-                  </button>
-                </div>
-              </div>
+
+        <div className="field">
+          <label>Nouveau mot de passe :</label>
+          <div className="controlPanel pwd inline nochrome">
+            <input className="input lightOnDark" type={showPwdNew ? "text" : "password"} value={pwdNew} onChange={(e) => setPwdNew(e.target.value)} />
+            <div className="strengthInline">
+              <div className="bar" data-on={pwdStrong >= 1} />
+              <div className="bar" data-on={pwdStrong >= 3} />
+              <div className="bar" data-on={pwdStrong >= 5} />
             </div>
+            <button type="button" className="iconButton tight" onClick={() => setShowPwdNew(!showPwdNew)} title={showPwdNew ? "Masquer" : "Afficher"}>
+              {showPwdNew ? <Eye style={{ width: 32, height: 32 }} /> : <EyeOff style={{ width: 32, height: 32 }} />}
+            </button>
           </div>
+        </div>
+
+        <div className="field">
+          <label>Confirmer le nouveau mot de passe :</label>
+          <div className="controlPanel nochrome">
+            <input className="input lightOnDark" type={showPwdNew2 ? "text" : "password"} value={pwdNew2} onChange={(e) => setPwdNew2(e.target.value)} />
+            <button type="button" className="iconButton tight" onClick={() => setShowPwdNew2(!showPwdNew2)} title={showPwdNew2 ? "Masquer" : "Afficher"}>
+              {showPwdNew2 ? <Eye style={{ width: 32, height: 32 }} /> : <EyeOff style={{ width: 32, height: 32 }} />}
+            </button>
+          </div>
+        </div>
+
+        <div className="field twofarow">
+          <label>Double authentification (2FA)</label>
+          <div className="controlPanel inline">
+            <input id="twofa" type="checkbox" checked={twoFA} onChange={(e) => setTwoFA(e.target.checked)} />
+            <label htmlFor="twofa" style={{ margin: 0 }}>Activer l’Authenticator</label>
+          </div>
+        </div>
+      </div>
+      <div className="verifyRow">
+        <button className="btn small" disabled={!pwdCurrent || !pwdNew || pwdNew !== pwdNew2}>Mettre à jour</button>
+      </div>
+    </div>
 
           {/* 2) Coordonnées du compte — large */}
           <div className="card tone-emerald">
@@ -826,22 +775,22 @@ function cancelSite() {
   /* ===== Cards ===== */
   .card {
     position: relative;
-    background: var(--card-bg, #141414);
-    border: 1px solid var(--border, rgba(255,255,255,0.10));
+    background: #01161B;
+    border: 0;
     border-radius: 14px;
     padding: 18px;
     min-width: 0;
     color: var(--text, #e6e8ec);             /* ensure white text inside */
   }
-  .tone-blue::before, .tone-emerald::before, .tone-violet::before,
-  .tone-orange::before, .tone-magenta::before, .tone-cyan::before, .tone-red::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    pointer-events: none;
-    box-shadow: inset 0 0 0 2px var(--border, rgba(255,255,255,0.10));
-  }
+.tone-blue::before, .tone-emerald::before, .tone-violet::before,
+.tone-orange::before, .tone-magenta::before, .tone-cyan::before, .tone-red::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 2px var(--border, rgba(255,255,255,0.10));
+}
 
   .tag {
     display: inline-block;
@@ -873,8 +822,8 @@ function cancelSite() {
 .profile .field {
   display: flex;
   flex-direction: column;
-  background: #01161B;
-  border: 1px solid var(--border, #0891B2);
+  background: #06232B;
+  border: 0;
   border-radius: 12px;
   padding: 12px;
 }
@@ -898,7 +847,7 @@ font-size: 17px
   .staticText { opacity: .98; }
 
   .staticRow { display: grid; align-items: center; gap: 8px; }
-  .nameRowStatic, .emailRowStatic { grid-template-columns: 1fr auto; }
+.nameRowStatic, .emailRowStatic { grid-template-columns: minmax(0,1fr) auto; }
 
   .editRow { display: grid; align-items: center; gap: 8px; }
  .nameRowEdit, .emailRowEdit {
@@ -967,10 +916,7 @@ font-size: 17px
     background: #111; color: var(--text, #e6e8ec); cursor: pointer;
   }
 /* Taille des pictos dans les .iconButton */
-.iconButton svg {
-  width: 20px;
-  height: 20px;
-}
+
   .strength { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
   .strength .bar {
     height: 6px; border-radius: 999px; background: #262626;
@@ -1053,7 +999,7 @@ font-size: 17px
 .input.lightOnDark {
   box-sizing: border-box;
   padding: 6px 10px;   /* ↓ au lieu de 10px 12px */
-  height: 36px;        /* force une hauteur fixe identique */
+  height: 42px;        /* force une hauteur fixe identique */
   font-size: 0.95rem;  /* cohérent avec staticText */
 color: #000000;
 }
@@ -1081,7 +1027,7 @@ color: #000000;
 }
 
 /* Cette règle est la cause du non-étirement. On la neutralise quand .stretch est présent */
-.controlPanel.inline { width: max-content; }  /* ← EXISTANT, ON LE GARDE */
+.profile .controlPanel.inline { width: 100%; }  /* ← EXISTANT, ON LE GARDE */
 .controlPanel.inline.stretch { width: 100%; } /* ← AJOUT : priorité quand .stretch est là */
 
 /* ---------- Alignement boutons & champs ---------- */
@@ -1117,7 +1063,8 @@ display: grid;
   grid-template-columns: 1fr auto auto; /* champ à gauche, jauge à droite */
   align-items: center;
   gap: 10px;
-  min-height: 32px; /* aligne la hauteur sur les autres champs */
+  min-height: 42px; /* aligne la hauteur sur les autres champs */
+  padding: 0 6px;
 }
 
 /* Jauge inline à droite du champ */
@@ -1171,7 +1118,7 @@ display: grid;
 .profile .editRow .controlPanel.inline { width: 100%; } /* au cas où */
 
 /* Hauteur et largeur des inputs en édition */
-.profile .editRow .input { height: 40px; width: 100%; }
+.profile .editRow .input { height: 42px; width: 100%; }
 
 /* Boutons Valider / Annuler : espace + taille uniforme */
 .profile .editActions { display: flex; gap: 10px; }
@@ -1190,7 +1137,7 @@ display: grid;
 .profile .staticBox {
   width: 100%;
   box-sizing: border-box;
-  height: 36px;         /* même hauteur que tes inputs compacts */
+  height: 42px;         /* même hauteur que tes inputs compacts */
   padding: 6px 10px;      /* pas de padding vertical qui gonfle la ligne */
   display: inline-flex; /* aligne le texte au centre verticalement */
   align-items: center;
@@ -1200,7 +1147,7 @@ display: grid;
 .card.tone-emerald .grid.two {
   /* comportement mobile / small : 1 colonne (déjà par défaut) */
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 10px;
 }
 
 /* dès 768px on passe à 2 colonnes (défaut existant),
@@ -1223,12 +1170,13 @@ display: grid;
 }
 
 /* --- Compactage de la carte “Coordonnées du compte” --- */
-.card.tone-emerald { padding: 14px; }
-.card.tone-emerald .field { padding: 8px; }
-.card.tone-emerald .field label { font-size: 15px; margin-bottom: 4px; }
-.card.tone-emerald .staticBox { height: 32px; padding: 4px 8px; font-size: 15px; }
+.card.tone-emerald { padding: 18px; }
+.card.tone-emerald .field { padding: 12px; }           /* comme Notifications */
+.card.tone-emerald .field label { margin-bottom: 6px; } /* comme Notifications */
+
+.card.tone-emerald .staticBox { height: 36px; padding: 4px 8px; font-size: 15px; }
 .card.tone-emerald .controlPanel { padding: 4px 6px; border-radius: 10px; }
-.card.tone-emerald .input { height: 34px; padding: 6px 8px; font-size: 0.95rem; }
+.card.tone-emerald .input { height: 42px; padding: 6px 8px; font-size: 0.95rem; }
 
 /* Coordonnées du compte : occupe 1 colonne (50%) dans la grille principale */
 .card.tone-emerald {
@@ -1279,8 +1227,7 @@ display: grid;
 }
 
 .card.tone-orange .table .row{
-  background: #01161B;             /* chaque ligne = une carte */
-  border: 1px solid var(--border);
+  background: #06232B;             /* chaque ligne = une carte */
   border-radius: 12px;
 }
 
@@ -1326,8 +1273,8 @@ display: grid;
 
 /* Chaque achat devient une “carte” */
 .card.tone-magenta .table .row{
-  background: #01161B;
-  border: 1px solid var(--border);
+  background: #06232B;
+
   border-radius: 12px;
   padding: 10px 12px;
 
@@ -1375,7 +1322,7 @@ display: grid;
 .editBankHeader {
   position: absolute;
   top: 12px;
-  right: 14px;
+  right: 18px;
 }
 
 .cardsGrid {
@@ -1417,11 +1364,10 @@ display: grid;
 }
 /* ——— ICÔNES AGRANDIES ——— */
 .profile .iconButton{
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 48px;
-  min-height: 48px;
-  flex: 0 0 48px;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 36px;
+  min-height: 36px;
   padding: 0;
   border-radius: 10px;
 }
@@ -1435,11 +1381,68 @@ display: grid;
 }
 
 /* Uniformise les petits boutons avec cette taille */
-.profile .btn.small,
-.profile .iconButton{
-  height: 48px !important;
+.profile .btn.small{
+  height: 36px !important;
   line-height: 1;
 }
+/* Supprime l'encadré autour des champs de mot de passe */
+.card.tone-blue .controlPanel.nochrome {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.card.tone-blue .controlPanel.pwd {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 8px !important; /* ← empêche l’input + œil de “mordre” la bordure */
+}
+/* Empêche le retour à la ligne des labels à côté des cases à cocher */
+.controlPanel.inline label {
+  white-space: nowrap;
+}
+
+/* Agrandit les cases à cocher pour plus de confort visuel */
+.controlPanel.inline input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: #0891B2; /* couleur cohérente avec ton thème cyan */
+}
+.input {
+  flex-shrink: 0;
+  flex-grow: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile .controlPanel { max-width: 100%; }
+.profile .controlPanel .input { 
+  flex: 1 1 auto; 
+  min-width: 0; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap;
+}
+.profile .staticBox,
+.profile .staticText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.grid > .field, .grid .field { min-width: 0; }
+.profile .field > .staticRow,
+.profile .field > .staticBox,
+.profile .field > .controlPanel {
+  min-height: 42px;   /* rangée = même gabarit partout */
+  align-items: center; /* centre verticalement le contenu */
+}
+:global(.profile .iconButton > svg){ width: 32px !important; height: 32px !important; }
+
+
+
 
 
 `}</style>
@@ -1451,7 +1454,7 @@ display: grid;
 /* Icône crayon */
 function PencilIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+<svg style={{ width: 32, height: 32 }} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" stroke="currentColor" strokeWidth="1.5" fill="currentColor" />
       <path d="M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" fill="currentColor" />
     </svg>
