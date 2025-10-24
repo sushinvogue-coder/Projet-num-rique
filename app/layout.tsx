@@ -263,8 +263,8 @@ function togglePref(key: string, next: boolean) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
-    await supabase.auth.signOut();
-    window.location.href = "/login"; // ou "/" si ta page publique est à la racine
+await supabase.auth.signOut();
+window.location.href = "/"; // Accueil — aucune page de connexion
   }}
   className="menu-link"
   style={
